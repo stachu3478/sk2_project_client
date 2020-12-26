@@ -3,6 +3,7 @@ package pl.put.poznan.sk2_project_client.ui;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class GameCanvas {
@@ -14,7 +15,7 @@ public class GameCanvas {
         graphicsContext = canvas.getGraphicsContext2D();
     }
 
-    public void appendTo(Group group) {
+    public void appendTo(StackPane group) {
         group.getChildren().add(canvas);
     }
 

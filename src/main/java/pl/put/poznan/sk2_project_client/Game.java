@@ -1,10 +1,12 @@
 package pl.put.poznan.sk2_project_client;
 
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import pl.put.poznan.sk2_project_client.ui.GameCanvas;
+import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
+import pl.put.poznan.sk2_project_client.game.Player;
+import pl.put.poznan.sk2_project_client.ui.GameUI;
+
+import java.io.IOException;
 
 public class Game extends Application {
 
@@ -14,13 +16,21 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("SK2 Game 0.1-BETA");
-        Group root = new Group();
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
+        GameUI ui = new GameUI(primaryStage);
 
-        GameCanvas gameCanvas = new GameCanvas();
-        gameCanvas.appendTo(root);
-        gameCanvas.draw();
+        Player player = new Player();
+        int attempts = 3;
+        while (!player.isConnected() && attempts > 0) {
+            try {
+                player.connect();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                attempts--;
+            }
+        }
+
+        if (player.isConnected()) {
+            player.getClient().setMessageIdentifier(new GameMessageIdentifier(player));
+        }
     }
 }
