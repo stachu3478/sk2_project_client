@@ -18,9 +18,6 @@ public class MessageWriter {
         buffer.put(buff);
         buffer.flip();
         writeMessages();
-        if (buffer.remaining() > 0) {
-            System.out.println("Warning: Yielding data output of " + buffer.remaining() + " bytes. THis is not handled. The app may crash.");
-        }
         buffer.clear();
     }
 
@@ -28,5 +25,8 @@ public class MessageWriter {
         int written = channel.write(buffer);
         System.out.println(written + " bytes written");
         if (buffer.remaining() == 0) buffer.clear();
+        else {
+            System.out.println("Warning: Yielding data output of " + buffer.remaining() + " bytes. This is not handled. The app may crash.");
+        }
     }
 }
