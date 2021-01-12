@@ -15,11 +15,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import pl.put.poznan.sk2_project_client.game.Player;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
 public class GameUI {
-    public GameUI(Stage primaryStage) {
+    public GameUI(Stage primaryStage, Player player) {
         primaryStage.setTitle("SK2 Game 0.1-BETA");
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 500, 500);
@@ -48,7 +50,12 @@ public class GameUI {
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Opening new window to add a new contact");
+                System.out.println("Connecting...");
+                try {
+                    player.play(nicknameField.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

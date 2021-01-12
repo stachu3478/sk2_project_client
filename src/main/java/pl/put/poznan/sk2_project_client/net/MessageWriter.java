@@ -10,19 +10,23 @@ public class MessageWriter {
 
     public MessageWriter(SocketChannel channel) {
         this.channel = channel;
-        this.buffer = ByteBuffer.allocate(8);
+        this.buffer = ByteBuffer.allocate(128);
     }
 
     public void emit(MessageOut message) throws IOException {
         ByteBuffer buff = message.serialize();
         buffer.put(buff);
+        buffer.flip();
         writeMessages();
-        if (buffer.remaining() > 0) System.out.println("Warning: Yielding data output");
-        else buffer.clear();
+        if (buffer.remaining() > 0) {
+            System.out.println("Warning: Yielding data output of " + buffer.remaining() + " bytes. THis is not handled. The app may crash.");
+        }
+        buffer.clear();
     }
 
     public void writeMessages() throws IOException {
-        channel.write(buffer);
+        int written = channel.write(buffer);
+        System.out.println(written + " bytes written");
         if (buffer.remaining() == 0) buffer.clear();
     }
 }

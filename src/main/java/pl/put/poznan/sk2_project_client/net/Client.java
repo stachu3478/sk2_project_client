@@ -11,7 +11,7 @@ public class Client {
     private ClientDisconnectionCallback disconnectionCallback;
 
     public Client() throws IOException {
-        this.channel = SocketChannel.open(new InetSocketAddress("192.168.0.104", 34780));
+        this.channel = SocketChannel.open(new InetSocketAddress("192.168.110.133", 34780));
         this.messageWriter = new MessageWriter(channel);
     }
 

@@ -16,9 +16,9 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GameUI ui = new GameUI(primaryStage);
-
         Player player = new Player();
+        GameUI ui = new GameUI(primaryStage, player);
+
         int attempts = 3;
         while (!player.isConnected() && attempts > 0) {
             try {

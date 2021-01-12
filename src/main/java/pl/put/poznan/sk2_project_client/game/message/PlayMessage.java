@@ -16,6 +16,7 @@ public class PlayMessage extends MessageOut {
         buffer.put((byte)0);
         buffer.put((byte)nickname.length());
         buffer.put(nickname.getBytes());
+        buffer.flip();
         return buffer;
     }
 }
