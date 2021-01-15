@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pl.put.poznan.sk2_project_client.Game</mainClass>
+                            <mainClass>pl.put.poznan.sk2_project_client.GameApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

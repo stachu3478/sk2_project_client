@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 public class GameMessageIdentifier extends MessageIdentifier {
     private MessageFilter filter;
     private final Player player;
+    private JoinMessage.ReceivedCallback joinCallback;
 
     public GameMessageIdentifier(Player player) {
         super();
@@ -24,13 +25,16 @@ public class GameMessageIdentifier extends MessageIdentifier {
         if (buffer.remaining() == 0) return null;
         byte messageType = buffer.get();
         GameMessage message;
-        if (messageType == 0) message = new JoinMessage();
+        if (messageType == 0) message = new JoinMessage(joinCallback);
         // else if blablabla
         // ... more message type verifies
         else throw new InvalidMessageError();
 
         message.setPlayer(player);
-        if (filter.shouldIgnore(messageType)) message.ignore();
         return message;
+    }
+
+    public void setJoinCallback(JoinMessage.ReceivedCallback joinCallback) {
+        this.joinCallback = joinCallback;
     }
 }

@@ -1,112 +1,115 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import javafx.animation.FadeTransition;
-import javafx.event.EventHandler;
-import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Duration;
+import javafx.scene.text.Text;
 import pl.put.poznan.sk2_project_client.game.Player;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
-import java.util.stream.Stream;
 
 public class GameUI {
-    public GameUI(Stage primaryStage, Player player) {
-        primaryStage.setTitle("SK2 Game 0.1-BETA");
-        StackPane root = new StackPane();
-        Scene scene = new Scene(root, 500, 500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    private final Player player;
+    private Text connectingText;
+    private final JFrame frame;
+    private JPanel panel;
+    private Object JTextField;
+    private int state = -1;
+    private final ConnectingPanel connectingPanel = new ConnectingPanel();
+    private final ConnectionFailedPanel connectionFailedPanel = new ConnectionFailedPanel();
+    private final ConnectedPanel connectedPanel;
 
-        HBox hBox = new HBox(new Button("One"), new Button("Two"));
-        hBox.setPadding(new Insets(10));
-        hBox.setSpacing(10);
-        StackPane hPane = new StackPane(hBox);
-        hPane.setMaxHeight(100);
-        hPane.setVisible(false);
-        hPane.setStyle("-fx-background-color:#55555550");
+    public GameUI(Player player) {
+        this.player = player;
+        this.connectedPanel = new ConnectedPanel(player);
 
-        VBox vBox = new VBox(new Button("One"), new Button("Two"));
-        vBox.setPadding(new Insets(10));
-        vBox.setSpacing(10);
-        StackPane vPane = new StackPane(vBox);
-        vPane.setMaxWidth(100);
-        vPane.setVisible(false);
-        vPane.setStyle("-fx-background-color:#55555550");
+        frame = new JFrame("SK2 Game 0.1-BETA");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // FIXME: Normal X closing does not work
+        frame.setSize(800, 600);
+        frame.setVisible(true);
 
-        Label nicknameLabel = new Label("Your nickname (or just press play):");
-        TextField nicknameField = new TextField();
-        Button playButton = new Button("Play");
-        playButton.setOnAction(new EventHandler<ActionEvent>() {
+        WindowListener l = new WindowListener() {
             @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Connecting...");
-                try {
-                    player.play(nicknameField.getText());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void windowOpened(WindowEvent e) {
+
             }
-        });
 
-        Button left = new Button("Left");
-        Button top = new Button("Top");
-        Button right = new Button("Right");
-        Button bottom = new Button("Bottom");
-        VBox buttons = new VBox(nicknameLabel, nicknameField, playButton, left, top, right, bottom);
-        buttons.setStyle("-fx-border-width:2px;-fx-border-color:black;");
-        buttons.setSpacing(10);
-        buttons.setAlignment(Pos.CENTER);
-        StackPane.setMargin(buttons, new Insets(15));
+            @Override
+            public void windowClosing(WindowEvent e) {
 
-        StackPane content = new StackPane(buttons);
-        content.setOnMouseClicked(e -> {
-            Node node = vPane.isVisible() ? vPane : hPane;
-            FadeTransition ft = new FadeTransition(Duration.millis(300), node);
-            ft.setOnFinished(e1 -> node.setVisible(false));
-            ft.setFromValue(1.0);
-            ft.setToValue(0.0);
-            ft.play();
-        });
+            }
 
-        StackPane canvasPane = new StackPane();
-        root.getChildren().addAll(canvasPane, content, hPane, vPane);
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
+            }
 
-        Stream.of(left, top, right, bottom).forEach(button -> {
-            button.setOnAction(e -> {
-                vPane.setVisible(false);
-                hPane.setVisible(false);
-                Node node;
-                switch (button.getText()) {
-                    case "Left":
-                    case "Right":
-                        node = vPane;
-                        StackPane.setAlignment(vPane, button.getText().equals("Left") ? Pos.CENTER_LEFT : Pos.CENTER_RIGHT);
-                        break;
-                    default:
-                        node = hPane;
-                        StackPane.setAlignment(hPane, button.getText().equals("Top") ? Pos.TOP_CENTER : Pos.BOTTOM_CENTER);
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        };
+
+        frame.addWindowListener(l);
+        new SwingWorker() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                synchronized (player) {
+                    if (player.isConnecting()) connecting();
+                    else if (player.isConnected()) connected();
+                    else connectionFailed();
                 }
-                node.setVisible(true);
-                FadeTransition ft = new FadeTransition(Duration.millis(300), node);
-                ft.setFromValue(0.0);
-                ft.setToValue(1.0);
-                ft.play();
-            });
-        });
+                return null;
+            }
 
+            @Override
+            protected void done() {
+
+            }
+        }.execute();
+    }
+
+    public void connecting() {
+        if (state == 0) return;
+        state = 0;
+        connectingPanel.setIn(frame);
+    }
+
+    public void connectionFailed() {
+        if (state == 2) return;
+        state = 2;
+        connectionFailedPanel.setIn(frame);
+    }
+
+    public void connected() {
+        if (state == 1) return;
+        state = 1;
+        connectedPanel.setIn(frame);
+    }
+
+    public void lobby() {
+
+    }
+
+    public void inGame() {
+        // TODO: add canvas to the valid pane
         GameCanvas gameCanvas = new GameCanvas();
-        gameCanvas.appendTo(canvasPane);
         gameCanvas.draw();
     }
 }
