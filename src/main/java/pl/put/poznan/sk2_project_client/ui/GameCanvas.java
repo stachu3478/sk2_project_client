@@ -1,31 +1,20 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javax.swing.*;
+import java.awt.*;
 
-public class GameCanvas {
-    private Canvas canvas;
-    private GraphicsContext graphicsContext;
+public class GameCanvas extends JPanel {
 
-    public GameCanvas() {
-        canvas = new Canvas(800, 600);
-        graphicsContext = canvas.getGraphicsContext2D();
-    }
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D graphics = (Graphics2D) g;
 
-    public void appendTo(StackPane group) {
-        group.getChildren().add(canvas);
-    }
+        graphics.setColor(Color.GREEN);
+        graphics.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 7));
+        graphics.drawLine(40, 10, 10, 40);
 
-    public void draw() {
-        graphicsContext.setFill(Color.GREEN);
-        graphicsContext.setStroke(Color.BLUE);
-        graphicsContext.setLineWidth(5);
-        graphicsContext.strokeLine(40, 10, 10, 40);
-
-        canvas.setTranslateX(20);
-        canvas.setTranslateX(0);
+        graphics.translate(20, 0);
+        graphics.translate(-20, 0);
     }
 }

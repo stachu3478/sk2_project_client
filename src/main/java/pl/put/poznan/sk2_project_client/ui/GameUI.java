@@ -1,7 +1,5 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import pl.put.poznan.sk2_project_client.game.Player;
 
 import javax.swing.*;
@@ -11,7 +9,6 @@ import java.io.IOException;
 
 public class GameUI {
     private final Player player;
-    private Text connectingText;
     private final JFrame frame;
     private JPanel panel;
     private Object JTextField;
@@ -70,12 +67,15 @@ public class GameUI {
         new SwingWorker() {
             @Override
             protected Void doInBackground() throws Exception {
-                synchronized (player) {
-                    if (player.isConnecting()) connecting();
-                    else if (player.isConnected()) connected();
-                    else connectionFailed();
+                while (true) {
+                    synchronized (player) {
+                        if (player.isConnecting()) connecting();
+                        else if (player.isConnected()) connected();
+                        else if (player.isInLobby()) lobby();
+                        else connectionFailed();
+                        player.wait();
+                    }
                 }
-                return null;
             }
 
             @Override
@@ -104,12 +104,18 @@ public class GameUI {
     }
 
     public void lobby() {
-
+        if (state == 3) return;
+        state = 3;
+        LobbyPanel lobbyPanel = new LobbyPanel();
+        lobbyPanel.addPlayer(player.getNickname());
+        connectedPanel.setIn(frame);
     }
 
     public void inGame() {
+        if (state == 4) return;
+        state = 4;
         // TODO: add canvas to the valid pane
         GameCanvas gameCanvas = new GameCanvas();
-        gameCanvas.draw();
+        frame.add(gameCanvas);
     }
 }

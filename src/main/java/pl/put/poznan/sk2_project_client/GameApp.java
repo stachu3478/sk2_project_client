@@ -1,7 +1,5 @@
 package pl.put.poznan.sk2_project_client;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
 import pl.put.poznan.sk2_project_client.game.Player;
 import pl.put.poznan.sk2_project_client.net.MessageIdentifier;

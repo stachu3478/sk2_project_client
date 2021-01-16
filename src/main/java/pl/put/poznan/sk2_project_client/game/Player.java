@@ -51,6 +51,10 @@ public class Player {
         this.client.emit(new PlayMessage(nickname));
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     // Message handles: TODO: implement all required
     public void setOwnerId(byte ownerId) {
         inLobby = true;

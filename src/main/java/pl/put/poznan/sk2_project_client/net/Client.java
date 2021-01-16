@@ -17,10 +17,11 @@ public class Client {
     private MessageWriter messageWriter;
     private ConnectionCallback connectionCallback;
     private ClientDisconnectionCallback disconnectionCallback;
+    private int connectionAttempts;
 
     public void start(String address, int port) {
-        int attempts = 3;
-        while (attempts > 0 && (this.channel == null || !this.channel.isConnected())) {
+        connectionAttempts = 1; // Yields so long so changing to 1
+        while (connectionAttempts > 0 && (this.channel == null || !this.channel.isConnected())) {
             try {
                 this.channel = SocketChannel.open(new InetSocketAddress(address, port));
                 this.selector = Selector.open();
@@ -32,7 +33,7 @@ public class Client {
                 this.messageWriter = new MessageWriter(channel);
             } catch (IOException e) {
                 e.printStackTrace();
-                attempts--;
+                connectionAttempts--;
             }
         }
     }
@@ -68,7 +69,7 @@ public class Client {
     }
 
     public boolean isConnecting() {
-        return channel == null || channel.isConnectionPending();
+        return (channel == null || !channel.isConnected()) && connectionAttempts > 0;
     }
 
     public void setMessageIdentifier(MessageIdentifier messageIdentifier) {

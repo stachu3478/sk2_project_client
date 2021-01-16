@@ -2,6 +2,8 @@ package pl.put.poznan.sk2_project_client;
 
 import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
 import pl.put.poznan.sk2_project_client.game.Player;
+import pl.put.poznan.sk2_project_client.game.message.JoinMessage;
+import pl.put.poznan.sk2_project_client.net.ClientDisconnectionCallback;
 import pl.put.poznan.sk2_project_client.ui.GameUI;
 
 import java.awt.*;
@@ -63,18 +65,34 @@ public class Game {
         synchronized (player) {
             connecting = false;
             if (player.isConnected()) bindCallbacks();
+            player.notify();
         }
     }
 
     private void bindCallbacks() {
-        player.onDisconnection(() -> {
-            System.out.println("Connection lost");
+        player.onDisconnection(new ClientDisconnectionCallback() {
+            private final Object lock = player;
+
+            @Override
+            public void call() {
+                synchronized (lock) {
+                    player.notify();
+                }
+            }
         });
 
-        messageIdentifier.setJoinCallback((message) -> {
-            player.setOwnerId(message.getOwnerId());
-            minPlayersToStart = message.getMinPlayersToStart();
-            System.out.println("Joined lobby");
+        messageIdentifier.setJoinCallback(new JoinMessage.ReceivedCallback() {
+            private final Object lock = player;
+
+            @Override
+            public void call(JoinMessage m) {
+                synchronized (lock) {
+                    player.setOwnerId(m.getOwnerId());
+                    minPlayersToStart = m.getMinPlayersToStart();
+                    System.out.println("Joined lobby");
+                    player.notify();
+                }
+            }
         });
     }
 
