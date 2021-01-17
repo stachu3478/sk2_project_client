@@ -2,16 +2,16 @@ package pl.put.poznan.sk2_project_client.ui;
 
 import javax.swing.*;
 
-public class ConnectingPanel {
-    private final JPanel panel;
+public class ConnectingPanel extends SwappablePanel {
+    private JLabel connectingText;
 
     public ConnectingPanel() {
         panel = new JPanel();
-        JLabel connectingText = new JLabel("Connecting...");
+        connectingText = new JLabel("Connecting...");
         panel.add(connectingText);
     }
 
-    public void setIn(JFrame frame) {
-        frame.add(panel);
+    public void dlaczegoToKurwaNieDziala() {
+        connectingText.setText("Dlaczego to kurwa nie działa");
     }
 }

@@ -24,6 +24,10 @@ public class Player {
         client.start(address, port);
     }
 
+    public void disconnect() throws IOException {
+        client.disconnect();
+    }
+
     public void setMessageIdentifier(GameMessageIdentifier messageIdentifier) {
         client.setMessageIdentifier(messageIdentifier);
     }

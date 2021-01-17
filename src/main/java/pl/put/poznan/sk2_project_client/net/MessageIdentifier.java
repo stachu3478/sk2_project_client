@@ -17,15 +17,24 @@ public abstract class MessageIdentifier {
         this.channel = channel;
     }
 
-    public void readMessages() throws IOException {
-        channel.read(buffer);
-        createMessages();
-        if (buffer.remaining() == 0) buffer.clear();
+    public boolean readMessages() throws IOException {
+        buffer.flip();
+        ByteBuffer buff = ByteBuffer.allocate(16);
+        buff.put(buffer);
+        int read = channel.read(buff);
+        buff.flip();
+        if (read == -1) return false; // EOF
+        createMessages(buff);
+
+        buffer = ByteBuffer.allocate(8);
+        buffer.put(buff);
+
+        return true;
     }
 
     protected abstract Message createMessage(ByteBuffer buffer);
 
-    private void createMessages() {
+    private void createMessages(ByteBuffer buffer) {
         if (lastMessage == null) {
             lastMessage = createMessage(buffer);
         }

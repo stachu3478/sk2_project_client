@@ -18,12 +18,18 @@ public class Client {
     private ConnectionCallback connectionCallback;
     private ClientDisconnectionCallback disconnectionCallback;
     private int connectionAttempts;
+    private InetSocketAddress addr;
 
     public void start(String address, int port) {
+        addr = new InetSocketAddress(address, port);
+        connect();
+    }
+
+    private void connect() {
         connectionAttempts = 1; // Yields so long so changing to 1
         while (connectionAttempts > 0 && (this.channel == null || !this.channel.isConnected())) {
             try {
-                this.channel = SocketChannel.open(new InetSocketAddress(address, port));
+                this.channel = SocketChannel.open(addr);
                 this.selector = Selector.open();
 
                 this.channel.configureBlocking(false);
@@ -51,6 +57,12 @@ public class Client {
             return selectFor(elapsed - milliseconds); // heaps off!
         }
         return null;
+    }
+
+    public void select() throws IOException {
+        selector.select();
+        if (!channel.isConnected()) connect();
+        if (!this.messageIdentifier.readMessages()) channel.close();
     }
 
     public SocketChannel getChannel() {

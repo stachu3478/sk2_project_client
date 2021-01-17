@@ -28,7 +28,7 @@ public class GameMessageIdentifier extends MessageIdentifier {
         if (messageType == 0) message = new JoinMessage(joinCallback);
         // else if blablabla
         // ... more message type verifies
-        else throw new InvalidMessageError();
+        else throw new InvalidMessageError("Unknown message type: " + messageType);
 
         message.setPlayer(player);
         return message;

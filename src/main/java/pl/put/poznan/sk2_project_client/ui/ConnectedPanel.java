@@ -8,14 +8,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class ConnectedPanel {
-    private final JPanel panel;
+public class ConnectedPanel extends SwappablePanel {
+    private final JLabel nicknameLabel;
 
     public ConnectedPanel(Player player) {
-        panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel nicknameLabel = new JLabel("Your nickname (or just press play):");
+        nicknameLabel = new JLabel("Your nickname (or just press play):");
         JTextField nicknameField = new JTextField();
         JButton playButton = new JButton("Play");
         playButton.addActionListener(new ActionListener() {
@@ -23,12 +22,8 @@ public class ConnectedPanel {
             public void actionPerformed(ActionEvent evt) {
                 try {
                     player.play(nicknameField.getText());
-                    while (!player.isInLobby()) {
-                        player.selectFor(50);
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // if (!player.isConnected()) connecting();
                 }
             }
         });
@@ -37,7 +32,7 @@ public class ConnectedPanel {
         panel.add(playButton);
     }
 
-    public void setIn(JFrame frame) {
-        frame.add(panel);
+    public void dlaczegoToKurwaNieDziala() {
+        nicknameLabel.setText("Dlaczego to kurwa nie działa");
     }
 }
