@@ -10,8 +10,4 @@ public class ConnectingPanel extends SwappablePanel {
         connectingText = new JLabel("Connecting...");
         panel.add(connectingText);
     }
-
-    public void dlaczegoToKurwaNieDziala() {
-        connectingText.setText("Dlaczego to kurwa nie działa");
-    }
 }

@@ -32,8 +32,4 @@ public class ConnectedPanel extends SwappablePanel {
         panel.add(nicknameField);
         panel.add(playButton);
     }
-
-    public void dlaczegoToKurwaNieDziala() {
-        nicknameLabel.setText("Dlaczego to kurwa nie działa");
-    }
 }
