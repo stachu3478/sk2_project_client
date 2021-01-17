@@ -12,6 +12,7 @@ public class ConnectedPanel extends SwappablePanel {
     private final JLabel nicknameLabel;
 
     public ConnectedPanel(Player player) {
+        super();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         nicknameLabel = new JLabel("Your nickname (or just press play):");

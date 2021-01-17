@@ -4,6 +4,7 @@ import javax.swing.*;
 
 public class ConnectionFailedPanel extends SwappablePanel {
     public ConnectionFailedPanel() {
+        super();
         JLabel connectingText = new JLabel("Failed to connect, check your address and try again.");
         panel.add(connectingText);
     }

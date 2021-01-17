@@ -77,7 +77,7 @@ public class Game {
 
             @Override
             public void call(JoinMessage m) {
-                    player.setOwnerId(m.getOwnerId());
+                    player.joinedLobby(m);
                     minPlayersToStart = m.getMinPlayersToStart();
             }
         });

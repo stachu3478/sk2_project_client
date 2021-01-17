@@ -1,5 +1,6 @@
 package pl.put.poznan.sk2_project_client.game;
 
+import pl.put.poznan.sk2_project_client.game.message.JoinMessage;
 import pl.put.poznan.sk2_project_client.game.message.PlayMessage;
 import pl.put.poznan.sk2_project_client.net.Client;
 import pl.put.poznan.sk2_project_client.net.ClientDisconnectionCallback;
@@ -11,6 +12,7 @@ public class Player {
     private String nickname;
     private boolean inLobby = false;
     private byte ownerId;
+    private byte minPlayersToStart;
     private String address;
     private int port;
 
@@ -60,9 +62,14 @@ public class Player {
     }
 
     // Message handles: TODO: implement all required
-    public void setOwnerId(byte ownerId) {
+    public void joinedLobby(JoinMessage m) {
         inLobby = true;
-        this.ownerId = ownerId;
+        this.ownerId = m.getOwnerId();
+        this.minPlayersToStart = m.getMinPlayersToStart();
+    }
+
+    public byte getMinPlayersToStart() {
+        return minPlayersToStart;
     }
 
     public boolean isInLobby() {

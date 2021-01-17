@@ -12,6 +12,7 @@ public class GameUI {
     private final ConnectingPanel connectingPanel = new ConnectingPanel();
     private final ConnectionFailedPanel connectionFailedPanel = new ConnectionFailedPanel();
     private final ConnectedPanel connectedPanel;
+    private SwappablePanel currentPanel;
     private UIWorker worker;
 
     public GameUI(Player player) {
@@ -37,34 +38,37 @@ public class GameUI {
         worker = new UIWorker(player, this::stateChanged);
         stateChanged(worker.getDerivedState());
         frame.validate();
-        frame.pack();
     }
 
     public void connecting() {
-        connectingPanel.setIn(frame);
+        setPanel(connectingPanel);
     }
 
     public void connectionFailed() {
-        connectingPanel.dlaczegoToKurwaNieDziala(); // Jak ta funkcja jest to działa
-        connectionFailedPanel.setIn(frame);
+        setPanel(connectionFailedPanel);
     }
 
     public void connected() {
-        connectingPanel.dlaczegoToKurwaNieDziala(); // Jak ta funkcja jest to działa
-        connectedPanel.setIn(frame);
+        setPanel(connectedPanel);
     }
 
     public void inLobby() {
         LobbyPanel lobbyPanel = new LobbyPanel();
         lobbyPanel.addPlayer(player.getNickname());
-        connectedPanel.dlaczegoToKurwaNieDziala(); // Jak ta funkcja jest to działa
-        lobbyPanel.setIn(frame);
+        lobbyPanel.setMinPlayersToStart(player.getMinPlayersToStart());
+        setPanel(lobbyPanel);
     }
 
     public void inGame() {
         // TODO: add canvas to the valid pane
         GameCanvas gameCanvas = new GameCanvas();
         frame.add(gameCanvas);
+    }
+
+    private void setPanel(SwappablePanel panel) {
+        if (currentPanel != null) frame.remove(currentPanel.getPanel());
+        panel.setIn(frame);
+        currentPanel = panel;
     }
 
     public void stateChanged(UIWorker.State s) {

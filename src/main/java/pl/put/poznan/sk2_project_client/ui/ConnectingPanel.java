@@ -6,7 +6,7 @@ public class ConnectingPanel extends SwappablePanel {
     private JLabel connectingText;
 
     public ConnectingPanel() {
-        panel = new JPanel();
+        super();
         connectingText = new JLabel("Connecting...");
         panel.add(connectingText);
     }
