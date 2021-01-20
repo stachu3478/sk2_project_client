@@ -1,22 +1,38 @@
 package pl.put.poznan.sk2_project_client;
 
 import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
-import pl.put.poznan.sk2_project_client.game.Player;
-import pl.put.poznan.sk2_project_client.net.MessageIdentifier;
+import pl.put.poznan.sk2_project_client.game.Me;
 import pl.put.poznan.sk2_project_client.ui.GameUI;
 
 import java.awt.*;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
-public class GameApp /* extends Application */ { // FIXME: Cant use javafx Application with multiple threads
-    private static Player player;
+public class GameApp {
+    private final Me me;
+    private GameMessageIdentifier messageIdentifier;
+    private GameUI ui;
 
-    private static Game.UiCallback callback;
+    private static String address = "192.168.110.135";
+    private static int port = 34780;
 
-    public static void create(Game.UiCallback c, Player p) {
-        callback = c;
-        player = p;
-        callback.call(new GameUI(player));
+    public static void main(String[] args) {
+        if (args.length > 0) address = args[0];
+        if (args.length > 1) port = Integer.parseInt(args[1]);
+
+        new GameApp();
+    }
+
+    public GameApp() {
+        me = new Me(address, port);
+        EventQueue.invokeLater(() -> {
+            ui = new GameUI(me);
+        });
+
+        synchronized (me) {
+            messageIdentifier = new GameMessageIdentifier(me);
+            messageIdentifier.setJoinCallback(me::joinedLobby);
+            messageIdentifier.setPlayerJoinCallback(me::playerJoined);
+            messageIdentifier.setGameJoinCallback(me::joinedGame);
+            me.setMessageIdentifier(messageIdentifier);
+        }
     }
 }

@@ -1,12 +1,12 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import pl.put.poznan.sk2_project_client.game.Player;
+import pl.put.poznan.sk2_project_client.game.Me;
 
 import javax.swing.*;
 import java.io.IOException;
 
 public class UIWorker extends SwingWorker<Void, Object> {
-    private final Player player;
+    private final Me me;
     private final UpdateCallback callback;
     private State derivedState = State.CONNECTING;
 
@@ -18,39 +18,19 @@ public class UIWorker extends SwingWorker<Void, Object> {
         IN_GAME
     }
 
-    public UIWorker(Player player, UpdateCallback callback) {
+    public UIWorker(Me me, UpdateCallback callback) {
         super();
-        this.player = player;
+        this.me = me;
         this.callback = callback;
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
-        synchronized (player) {
-            Thread thread = new Thread(() -> {
-                while (!stateChanged() && player.isConnected()) {
-                    synchronized (player) {
-                        try {
-                            player.getClient().select();
-                            player.notify();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            try {
-                                while (player.isConnected()) player.disconnect();
-                            } catch (IOException ioException) {
-                                ioException.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            });
-
-            thread.start();
-
-            while (!stateChanged()) {
-                try {
-                    player.wait();
-                } catch (InterruptedException ignored) {}
+    protected Void doInBackground() {
+        synchronized (me) {
+            try {
+                me.getClient().select();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
@@ -59,8 +39,13 @@ public class UIWorker extends SwingWorker<Void, Object> {
 
     @Override
     protected void done() {
-        derivedState = deriveState();
-        callback.update(derivedState);
+        if (!me.isConnected()) me.connect();
+        State newState = deriveState();
+        if (newState != derivedState) {
+            derivedState = deriveState();
+            callback.update(derivedState);
+        }
+        callback.reload();
     }
 
     public State getDerivedState() {
@@ -68,22 +53,19 @@ public class UIWorker extends SwingWorker<Void, Object> {
     }
 
     private State deriveState() {
-        if (player.isConnecting()) return State.CONNECTING;
-        else if (player.isConnected() && player.isInLobby()) return State.IN_LOBBY;
-        else if (player.isConnected()) return State.CONNECTED;
+        if (me.isConnecting()) return State.CONNECTING;
+        else if (me.isConnected() && me.isInLobby()) return State.IN_LOBBY;
+        else if (me.isConnected()) return State.CONNECTED;
         else return State.FAILED_TO_CONNECT;
-    }
-
-    private boolean stateChanged() {
-        return deriveState() != derivedState;
     }
 
     public interface UpdateCallback {
         void update(State s);
+        void reload();
     }
 
     public UIWorker respawn() {
-        UIWorker newWorker = new UIWorker(player, callback);
+        UIWorker newWorker = new UIWorker(me, callback);
         newWorker.derivedState = derivedState;
         newWorker.execute();
         return newWorker;

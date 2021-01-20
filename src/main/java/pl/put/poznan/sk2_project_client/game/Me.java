@@ -1,23 +1,20 @@
 package pl.put.poznan.sk2_project_client.game;
 
-import pl.put.poznan.sk2_project_client.game.message.GameMessage;
-import pl.put.poznan.sk2_project_client.game.message.JoinMessage;
-import pl.put.poznan.sk2_project_client.game.message.PlayMessage;
+import pl.put.poznan.sk2_project_client.game.message.*;
 import pl.put.poznan.sk2_project_client.net.Client;
 import pl.put.poznan.sk2_project_client.net.ClientDisconnectionCallback;
 
 import java.io.IOException;
 
-public class Player {
+public class Me extends Player {
     private Client client;
-    private String nickname;
     private boolean inLobby = false;
-    private byte ownerId;
     private Game game;
     private String address;
     private int port;
 
-    public Player(String address, int port) {
+    public Me(String address, int port) {
+        super("", (byte) -1);
         this.address = address;
         this.port = port;
         client = new Client();
@@ -58,20 +55,24 @@ public class Player {
         this.client.emit(new PlayMessage(nickname));
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
     // Message handles: TODO: implement all required
     public void joinedLobby(GameMessage msg) {
         JoinMessage m = (JoinMessage) msg;
         inLobby = true;
         this.ownerId = m.getOwnerId();
-        this.game = new Game(m.getMinPlayersToStart(), m.getMaxPlayersCount());
-        this.game.addPlayer(nickname);
+        this.game = new Game(m.getConfig());
+        this.game.addPlayer(this);
     }
 
-    public void playerJoined() {}
+    public void playerJoined(GameMessage msg) {
+        PlayerJoinedMessage m = (PlayerJoinedMessage) msg;
+        this.game.addPlayer(new Player(m.getNickname(), m.getOwnerId()));
+    }
+
+    public void joinedGame(GameMessage msg) {
+        GameJoinMessage m = (GameJoinMessage) msg;
+        // TODO: implement;
+    }
 
     public Game getGame() {
         return game;
@@ -83,9 +84,5 @@ public class Player {
 
     public void selectFor(long milliseconds) throws IOException {
         client.selectFor(milliseconds);
-    }
-
-    public byte getOwnerId() {
-        return ownerId;
     }
 }

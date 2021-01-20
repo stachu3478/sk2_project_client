@@ -61,7 +61,6 @@ public class Client {
 
     public void select() throws IOException {
         selector.select();
-        if (!channel.isConnected()) connect();
         if (!this.messageIdentifier.readMessages()) channel.close();
     }
 

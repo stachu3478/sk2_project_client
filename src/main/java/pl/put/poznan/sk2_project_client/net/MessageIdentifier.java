@@ -18,16 +18,23 @@ public abstract class MessageIdentifier {
     }
 
     public boolean readMessages() throws IOException {
-        buffer.flip();
-        ByteBuffer buff = ByteBuffer.allocate(16);
-        buff.put(buffer);
-        int read = channel.read(buff);
-        buff.flip();
-        if (read == -1) return false; // EOF
-        createMessages(buff);
+        int read = 0;
+        do {
+            buffer.flip();
+            ByteBuffer buff = ByteBuffer.allocate(buffer.remaining() + 16 + read);
+            buff.put(buffer);
+            read = channel.read(buff);
+            buff.flip();
+            createMessages(buff);
+            if (read == -1) {
+                buffer.clear();
+                return false; // EOF
+            }
 
-        buffer = ByteBuffer.allocate(8);
-        buffer.put(buff);
+            buffer = ByteBuffer.allocate(buff.remaining());
+            buffer.put(buff);
+        } while (read > 0);
+
 
         return true;
     }

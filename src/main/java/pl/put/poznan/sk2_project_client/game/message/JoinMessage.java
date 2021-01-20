@@ -1,30 +1,31 @@
 package pl.put.poznan.sk2_project_client.game.message;
 
+import pl.put.poznan.sk2_project_client.game.Config;
+
 import java.nio.ByteBuffer;
 
 public class JoinMessage extends GameMessage {
-    private int bytesRead = 0;
-    private byte minPlayersToStart;
+    private boolean complete = false;
     private byte ownerId;
-    private final ReceivedCallback callback;
+    private final Config config = new Config();
 
     public JoinMessage(ReceivedCallback callback) {
-        this.callback = callback;
+        super(callback);
     }
 
     public void readBuffer(ByteBuffer buffer) {
-        if (bytesRead == 0 && buffer.hasRemaining()) {
-            bytesRead++;
-            minPlayersToStart = buffer.get();
-        }
-        if (bytesRead == 1 && buffer.hasRemaining()) {
-            bytesRead++;
-            ownerId = buffer.get();
-        }
+        if (buffer.remaining() < 12) return;
+        config.setMinPlayersToStart(buffer.get());
+        ownerId = buffer.get();
+        config.setMaxPlayersCount(buffer.get());
+        config.setCountdownSeconds(buffer.get());
+        config.setMapWidth(buffer.getInt());
+        config.setMapHeight(buffer.getInt());
+        complete = true;
     }
 
-    public byte getMinPlayersToStart() {
-        return minPlayersToStart;
+    public Config getConfig() {
+        return config;
     }
 
     public byte getOwnerId() {
@@ -32,15 +33,6 @@ public class JoinMessage extends GameMessage {
     }
 
     public boolean isComplete() {
-        return bytesRead >= 2;
-    }
-
-    public void receive() {
-        if (!ignored)
-            callback.call(this);
-    }
-
-    public interface ReceivedCallback {
-        void call(JoinMessage m);
+        return complete;
     }
 }
