@@ -9,6 +9,7 @@ import java.io.IOException;
 public class Me extends Player {
     private Client client;
     private boolean inLobby = false;
+    private boolean inGame = false;
     private Game game;
     private String address;
     private int port;
@@ -59,6 +60,7 @@ public class Me extends Player {
     public void joinedLobby(GameMessage msg) {
         JoinMessage m = (JoinMessage) msg;
         inLobby = true;
+        inGame = false;
         this.ownerId = m.getOwnerId();
         this.game = new Game(m.getConfig());
         this.game.addPlayer(this);
@@ -71,6 +73,8 @@ public class Me extends Player {
 
     public void joinedGame(GameMessage msg) {
         GameJoinMessage m = (GameJoinMessage) msg;
+        inGame = true;
+        inLobby = false;
         // TODO: implement;
     }
 
@@ -80,6 +84,10 @@ public class Me extends Player {
 
     public boolean isInLobby() {
         return inLobby;
+    }
+
+    public boolean isInGame() {
+        return inGame;
     }
 
     public void selectFor(long milliseconds) throws IOException {

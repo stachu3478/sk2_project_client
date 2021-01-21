@@ -55,6 +55,7 @@ public class UIWorker extends SwingWorker<Void, Object> {
     private State deriveState() {
         if (me.isConnecting()) return State.CONNECTING;
         else if (me.isConnected() && me.isInLobby()) return State.IN_LOBBY;
+        else if (me.isConnected() && me.isInGame()) return State.IN_GAME;
         else if (me.isConnected()) return State.CONNECTED;
         else return State.FAILED_TO_CONNECT;
     }

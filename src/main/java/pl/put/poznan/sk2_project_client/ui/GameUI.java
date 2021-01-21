@@ -70,9 +70,8 @@ public class GameUI {
     }
 
     public void inGame() {
-        // TODO: add canvas to the valid pane
-        GameCanvas gameCanvas = new GameCanvas();
-        frame.add(gameCanvas);
+        InGamePanel inGamePanel = new InGamePanel(me.getGame());
+        setPanel(inGamePanel);
     }
 
     private void setPanel(SwappablePanel panel) {
