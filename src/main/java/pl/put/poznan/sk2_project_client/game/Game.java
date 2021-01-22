@@ -5,10 +5,12 @@ import java.util.List;
 
 public class Game {
     private Config config;
+    private Map map;
     private final List<Player> players = new ArrayList<>();
 
     public Game(Config config) {
         this.config = config;
+        map = new Map(config.getMapWidth(), config.getMapHeight());
     }
 
     public void addPlayer(Player player) {
@@ -21,5 +23,9 @@ public class Game {
 
     public Config getConfig() {
         return config;
+    }
+
+    public Map getMap() {
+        return map;
     }
 }

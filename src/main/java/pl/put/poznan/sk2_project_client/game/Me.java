@@ -75,7 +75,9 @@ public class Me extends Player {
         GameJoinMessage m = (GameJoinMessage) msg;
         inGame = true;
         inLobby = false;
-        // TODO: implement;
+        for (Unit unit : m.getUnits()) {
+            game.getMap().setUnit(unit);
+        }
     }
 
     public Game getGame() {

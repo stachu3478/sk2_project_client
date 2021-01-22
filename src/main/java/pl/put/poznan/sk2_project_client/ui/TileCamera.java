@@ -28,24 +28,36 @@ public class TileCamera {
         fitIntoMap();
     }
 
+    public void setSize(int screenWidth, int screenHeight) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+        fitIntoMap();
+    }
+
+    public void setMapSize(int mapWidth, int mapHeight) {
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+    }
+
     public void iterateVisibleTiles(TileCallback callback) {
         int tileX = scrollX / TILE_SIZE;
-        for (int screenX = scrollX % TILE_SIZE - TILE_SIZE; screenX < screenWidth; screenX += TILE_SIZE, tileX++ ) {
+        for (int screenX = -scrollX % TILE_SIZE - TILE_SIZE; screenX < screenWidth && tileX < mapWidth; screenX += TILE_SIZE, tileX++ ) {
             int tileY = scrollY / TILE_SIZE;
-            for (int screenY = scrollY % TILE_SIZE - TILE_SIZE; screenX < screenHeight; screenY += TILE_SIZE, tileY++) {
+            for (int screenY = -scrollY % TILE_SIZE - TILE_SIZE; screenY < screenHeight && tileY < mapHeight; screenY += TILE_SIZE, tileY++) {
                 callback.call(tileX, tileY, screenX, screenY);
             }
         }
     }
 
     private void fitIntoMap() {
-        if (scrollX + screenWidth > TILE_SIZE * mapWidth) scrollX = TILE_SIZE * mapWidth - screenWidth;
+        if (scrollX + screenWidth > TILE_SIZE * mapWidth - TILE_SIZE / 2) scrollX = TILE_SIZE * mapWidth - screenWidth - TILE_SIZE / 2;
         if (scrollX < 0) scrollX = 0;
-        if (scrollY + screenHeight > TILE_SIZE * mapHeight) scrollY = TILE_SIZE * mapHeight - screenHeight;
+        if (scrollY + screenHeight > TILE_SIZE * mapHeight - TILE_SIZE / 2) scrollY = TILE_SIZE * mapHeight - screenHeight - TILE_SIZE / 2;
         if (scrollY < 0) scrollY = 0;
     }
 
     public interface TileCallback {
+        int T_SIZE = TILE_SIZE;
         void call(int tileX, int tileY, int screenX, int screenY);
     }
 }

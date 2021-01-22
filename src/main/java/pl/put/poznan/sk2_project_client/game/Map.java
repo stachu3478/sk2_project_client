@@ -8,7 +8,13 @@ public class Map {
     private final Tile[][] tiles;
 
     public Map(int width, int height) {
+        this.width = width;
+        this.height = height;
         this.tiles = new Tile[width][height];
+    }
+
+    public void setUnit(Unit unit) {
+        setUnit(unit, unit.getXPos(), unit.getYPos());
     }
 
     public void setUnit(Unit unit, int x, int y) {
@@ -33,5 +39,13 @@ public class Map {
         Unit unit = tile.getUnit();
         if (unit == null) return null;
         return unit.getColor();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -75,7 +75,7 @@ public class GameUI {
     }
 
     private void setPanel(SwappablePanel panel) {
-        if (currentPanel != null) frame.remove(currentPanel.getPanel());
+        if (currentPanel != null) currentPanel.unset();
         panel.setIn(frame);
         currentPanel = panel;
     }

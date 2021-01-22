@@ -6,11 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class InGamePanel extends SwappablePanel {
-    private GameCanvas gameCanvas = new GameCanvas();
+    private GameCanvas gameCanvas;
     private Game game;
 
     public InGamePanel(Game game) {
         super();
+        gameCanvas = new GameCanvas(game.getMap());
         this.game = game;
         JLabel gameText = new JLabel("You are in the game, somehow");
         gameText.setForeground(Color.LIGHT_GRAY);

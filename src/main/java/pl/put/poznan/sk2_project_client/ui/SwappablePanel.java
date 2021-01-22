@@ -19,6 +19,12 @@ public class SwappablePanel {
         frame.add(panel);
         frame.revalidate();
         frame.repaint();
+        panel.setVisible(true);
+    }
+
+    void unset() {
+        frame.remove(panel);
+        panel.setVisible(false);
     }
 
     public JPanel getPanel() {
