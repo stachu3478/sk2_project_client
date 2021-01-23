@@ -1,8 +1,12 @@
 package pl.put.poznan.sk2_project_client.game;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 public class Player {
     protected String nickname;
     protected byte ownerId;
+    protected HashMap<Integer, Unit> units = new HashMap<>();
 
     public Player(String nickname, byte ownerId) {
         this.nickname = nickname;
@@ -15,5 +19,21 @@ public class Player {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public void addUnit(Unit unit) {
+        units.put(unit.getId(), unit);
+    }
+
+    public void removeUnit(int id) {
+        units.remove(id);
+    }
+
+    public Unit getUnit(int id) {
+        return units.get(id);
+    }
+
+    public Collection<Unit> getUnits() {
+        return units.values();
     }
 }

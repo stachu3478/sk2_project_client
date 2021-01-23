@@ -70,7 +70,7 @@ public class GameUI {
     }
 
     public void inGame() {
-        InGamePanel inGamePanel = new InGamePanel(me.getGame());
+        InGamePanel inGamePanel = new InGamePanel(me);
         setPanel(inGamePanel);
     }
 

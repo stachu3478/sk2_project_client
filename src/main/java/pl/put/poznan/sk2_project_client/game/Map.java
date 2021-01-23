@@ -41,6 +41,14 @@ public class Map {
         return unit.getColor();
     }
 
+    public boolean getStroke(int x, int y) {
+        Tile tile = tiles[x][y];
+        if (tile == null) return false;
+        Unit unit = tile.getUnit();
+        if (unit == null) return false;
+        return unit.isSelected();
+    }
+
     public int getWidth() {
         return width;
     }

@@ -76,7 +76,7 @@ public class Me extends Player {
         inGame = true;
         inLobby = false;
         for (Unit unit : m.getUnits()) {
-            game.getMap().setUnit(unit);
+            game.addUnit(unit);
         }
     }
 

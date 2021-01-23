@@ -1,12 +1,15 @@
 package pl.put.poznan.sk2_project_client.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public class Game {
     private Config config;
     private Map map;
-    private final List<Player> players = new ArrayList<>();
+    private final HashMap<Byte, Player> players = new HashMap<>();
+    private final HashMap<Integer, Unit> units = new HashMap<>();
 
     public Game(Config config) {
         this.config = config;
@@ -14,11 +17,17 @@ public class Game {
     }
 
     public void addPlayer(Player player) {
-        players.add(player);
+        players.put(player.getOwnerId(), player);
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public void addUnit(Unit unit) {
+        players.get(unit.getOwnerId()).addUnit(unit);
+        units.put(unit.getId(), unit);
+        map.setUnit(unit);
+    }
+
+    public Collection<Player> getPlayers() {
+        return players.values();
     }
 
     public Config getConfig() {

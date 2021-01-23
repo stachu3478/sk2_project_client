@@ -1,9 +1,13 @@
 package pl.put.poznan.sk2_project_client.ui;
 
 import pl.put.poznan.sk2_project_client.game.Tile;
+import pl.put.poznan.sk2_project_client.game.Unit;
+
+import java.awt.*;
 
 public class TileCamera {
     private final static int TILE_SIZE = 32; // tile size in pixels
+    private Marker marker = new Marker();
     private int scrollX; // upper left corner position
     private int scrollY;
     private int screenWidth;
@@ -14,6 +18,7 @@ public class TileCamera {
     public TileCamera(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        marker.setTileSize(TILE_SIZE);
     }
 
     public void scrollBy(int x, int y) {
@@ -22,7 +27,9 @@ public class TileCamera {
         fitIntoMap();
     }
 
-    public void setCenter(int x, int y) {
+    public void setCenter(int tileX, int tileY) {
+        int x = tileX * TILE_SIZE - TILE_SIZE / 2;
+        int y = tileY * TILE_SIZE - TILE_SIZE / 2;
         this.scrollX = x - screenWidth / 2;
         this.scrollY = y - screenHeight / 2;
         fitIntoMap();
@@ -50,6 +57,7 @@ public class TileCamera {
     }
 
     private void fitIntoMap() {
+        if (screenWidth == 0 || screenHeight == 0) return;
         if (scrollX + screenWidth > TILE_SIZE * mapWidth - TILE_SIZE) scrollX = TILE_SIZE * mapWidth - screenWidth - TILE_SIZE;
         if (scrollX < 0) scrollX = 0;
         if (scrollY + screenHeight > TILE_SIZE * mapHeight - TILE_SIZE) scrollY = TILE_SIZE * mapHeight - screenHeight - TILE_SIZE;
@@ -59,5 +67,24 @@ public class TileCamera {
     public interface TileCallback {
         int T_SIZE = TILE_SIZE;
         void call(int tileX, int tileY, int screenX, int screenY);
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarkPosition(int x, int y, boolean initial) {
+        if (initial) marker.setMarkStart(x + scrollX, y + scrollY);
+        else marker.setMarkEnd(x + scrollX, y + scrollY);
+    }
+
+    public Rectangle getMarkRectangle() {
+        Rectangle r = marker.getMarkRectangle();
+        return new Rectangle(r.x - scrollX, r.y - scrollY, r.width, r.height);
+    }
+
+    public Rectangle getMarkRectangle(int endX, int endY) {
+        Rectangle r = marker.getMarkRectangle(endX + scrollX, endY + scrollY);
+        return new Rectangle(r.x - scrollX, r.y - scrollY, r.width, r.height);
     }
 }

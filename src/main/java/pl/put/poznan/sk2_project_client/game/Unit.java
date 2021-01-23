@@ -8,6 +8,7 @@ public class Unit {
     private int yPos;
     private byte ownerId;
     private int id;
+    private boolean selected;
 
     public Unit(byte ownerId) {
         this.ownerId = ownerId;
@@ -45,6 +46,18 @@ public class Unit {
 
     public void setOwnerId(byte ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public byte getOwnerId() {
+        return ownerId;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public Color getColor() {

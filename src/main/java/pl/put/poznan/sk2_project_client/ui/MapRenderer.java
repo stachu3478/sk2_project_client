@@ -1,13 +1,17 @@
 package pl.put.poznan.sk2_project_client.ui;
 
 import pl.put.poznan.sk2_project_client.game.Map;
+import pl.put.poznan.sk2_project_client.game.Unit;
 
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 
 public class MapRenderer {
     private final Map map;
     private TileCamera camera;
     private final DrawTileCallback tileCallback = new DrawTileCallback();
+    private Dimension markStart;
+    private Dimension markEnd;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -39,6 +43,10 @@ public class MapRenderer {
                 graphics2D.setColor(color);
             }
             graphics2D.fillRect(screenX, screenY, T_SIZE, T_SIZE);
+            if (map.getStroke(tileX, tileY)) {
+                graphics2D.setColor(Color.BLACK);
+                graphics2D.drawRect(screenX, screenY, T_SIZE, T_SIZE);
+            }
         }
     }
 }
