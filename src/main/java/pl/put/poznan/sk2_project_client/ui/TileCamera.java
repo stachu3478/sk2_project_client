@@ -50,9 +50,9 @@ public class TileCamera {
     }
 
     private void fitIntoMap() {
-        if (scrollX + screenWidth > TILE_SIZE * mapWidth - TILE_SIZE / 2) scrollX = TILE_SIZE * mapWidth - screenWidth - TILE_SIZE / 2;
+        if (scrollX + screenWidth > TILE_SIZE * mapWidth - TILE_SIZE) scrollX = TILE_SIZE * mapWidth - screenWidth - TILE_SIZE;
         if (scrollX < 0) scrollX = 0;
-        if (scrollY + screenHeight > TILE_SIZE * mapHeight - TILE_SIZE / 2) scrollY = TILE_SIZE * mapHeight - screenHeight - TILE_SIZE / 2;
+        if (scrollY + screenHeight > TILE_SIZE * mapHeight - TILE_SIZE) scrollY = TILE_SIZE * mapHeight - screenHeight - TILE_SIZE;
         if (scrollY < 0) scrollY = 0;
     }
 
