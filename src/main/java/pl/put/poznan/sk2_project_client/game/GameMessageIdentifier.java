@@ -1,9 +1,6 @@
 package pl.put.poznan.sk2_project_client.game;
 
-import pl.put.poznan.sk2_project_client.game.message.GameJoinMessage;
-import pl.put.poznan.sk2_project_client.game.message.GameMessage;
-import pl.put.poznan.sk2_project_client.game.message.JoinMessage;
-import pl.put.poznan.sk2_project_client.game.message.PlayerJoinedMessage;
+import pl.put.poznan.sk2_project_client.game.message.*;
 import pl.put.poznan.sk2_project_client.net.Message;
 import pl.put.poznan.sk2_project_client.net.MessageIdentifier;
 
@@ -15,6 +12,7 @@ public class GameMessageIdentifier extends MessageIdentifier {
     private GameMessage.ReceivedCallback joinCallback;
     private GameMessage.ReceivedCallback playerJoinCallback;
     private GameMessage.ReceivedCallback gameJoinCallback;
+    private GameMessage.ReceivedCallback unitMovedCallback;
 
     public GameMessageIdentifier(Me me) {
         super();
@@ -32,6 +30,7 @@ public class GameMessageIdentifier extends MessageIdentifier {
         if (messageType == 0) message = new JoinMessage(joinCallback);
         else if (messageType == 1) message = new GameJoinMessage(gameJoinCallback);
         else if (messageType == 2) message = new PlayerJoinedMessage(playerJoinCallback);
+        else if (messageType == 3) message = new UnitMovedMessage(unitMovedCallback);
         // else if blablabla
         // ... more message type verifies
         else throw new InvalidMessageError("Unknown message type: " + messageType);
@@ -50,5 +49,9 @@ public class GameMessageIdentifier extends MessageIdentifier {
 
     public void setGameJoinCallback(GameJoinMessage.ReceivedCallback gameJoinCallback) {
         this.gameJoinCallback = gameJoinCallback;
+    }
+
+    public void setUnitMovedCallback(GameMessage.ReceivedCallback unitMovedCallback) {
+        this.unitMovedCallback = unitMovedCallback;
     }
 }

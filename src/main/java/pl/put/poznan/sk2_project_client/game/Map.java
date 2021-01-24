@@ -19,7 +19,7 @@ public class Map {
 
     public void setUnit(Unit unit, int x, int y) {
         tiles[x][y] = new Tile(unit);
-        unit.setPos(x, y);
+        if (unit != null) unit.setPos(x, y);
     }
 
     public void moveUnit(Unit unit, int x, int y) {

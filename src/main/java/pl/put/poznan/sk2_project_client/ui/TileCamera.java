@@ -73,6 +73,10 @@ public class TileCamera {
         return marker;
     }
 
+    public Point toTilePosition(Point screenPosition) {
+        return new Point((screenPosition.x + scrollX) / TILE_SIZE + 1, (screenPosition.y + scrollY) / TILE_SIZE + 1);
+    }
+
     public void setMarkPosition(int x, int y, boolean initial) {
         if (initial) marker.setMarkStart(x + scrollX, y + scrollY);
         else marker.setMarkEnd(x + scrollX, y + scrollY);

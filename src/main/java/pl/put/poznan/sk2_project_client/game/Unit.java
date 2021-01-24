@@ -56,8 +56,8 @@ public class Unit {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public boolean setSelected(boolean selected) {
+        return this.selected = selected;
     }
 
     public Color getColor() {

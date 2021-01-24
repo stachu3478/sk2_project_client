@@ -7,8 +7,10 @@ import pl.put.poznan.sk2_project_client.game.Unit;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameCanvas extends JPanel {
@@ -22,6 +24,7 @@ public class GameCanvas extends JPanel {
     private final Timer renderingTimer = new Timer(RENDERING_PERIOD_MILLIS, (e) -> repaint());
     private Marker marker;
     private Point mousePositionOffset;
+    private ArrayList<Unit> selectedUnits = new ArrayList<>();
 
     public GameCanvas(Me me) {
         super();
@@ -49,9 +52,26 @@ public class GameCanvas extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 camera.setMarkPosition(e.getX(), e.getY(), false);
-                for (Iterator<Unit> it = me.getUnits().iterator(); it.hasNext(); ) {
-                    Unit unit = it.next();
-                    marker.checkUnitSelection(unit);
+                if (selectedUnits.isEmpty()) { // select units
+                    for (Iterator<Unit> it = me.getUnits().iterator(); it.hasNext(); ) {
+                        Unit unit = it.next();
+                        if (marker.checkUnitSelection(unit)) {
+                            selectedUnits.add(unit);
+                        }
+                    }
+                } else { // move units
+                    try {
+                        me.moveUnits(selectedUnits, camera.toTilePosition(new Point(e.getX(), e.getY())));
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                        try {
+                            me.disconnect();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    for (Unit unit : selectedUnits) unit.setSelected(false);
+                    selectedUnits.clear();
                 }
             }
         });
@@ -62,6 +82,10 @@ public class GameCanvas extends JPanel {
                 if (Character.toLowerCase(e.getKeyChar()) == 'd') scrollingX = 1;
                 if (Character.toLowerCase(e.getKeyChar()) == 'w') scrollingY = -1;
                 if (Character.toLowerCase(e.getKeyChar()) == 's') scrollingY = 1;
+                if (Character.toLowerCase(e.getKeyChar()) == ' ') {
+                    for (Unit unit : selectedUnits) unit.setSelected(false);
+                    selectedUnits.clear();
+                }
                 processScrolling();
             }
 
@@ -83,13 +107,22 @@ public class GameCanvas extends JPanel {
         Graphics2D graphics = (Graphics2D) g;
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
         renderer.render(graphics);
-        if (marker.isInProgress()) {
+        if (marker.isInProgress()) { // zaznaczamy zaznaczanie zaznaczenia
             graphics.setStroke(new BasicStroke(3));
             graphics.setColor(new Color(64, 250, 64, 40));
             Point mousePosition = MouseInfo.getPointerInfo().getLocation();
             Rectangle r = camera.getMarkRectangle(mousePosition.x - mousePositionOffset.x, mousePosition.y - mousePositionOffset.y);
             graphics.drawRect(r.x, r.y, r.width, r.height);
             graphics.fillRect(r.x, r.y, r.width, r.height);
+        } else if (!selectedUnits.isEmpty()) { // celowniczek ;d
+            Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+            int mx = mousePosition.x - mousePositionOffset.x;
+            int my = mousePosition.y - mousePositionOffset.y;
+            graphics.setColor(new Color(200, 250, 250, 200));
+            graphics.fillRect(mx - 16, my - 2, 8, 4);
+            graphics.fillRect(mx + 8, my - 2, 8, 4);
+            graphics.fillRect(mx - 2, my - 16, 4, 8);
+            graphics.fillRect(mx - 2, my + 8, 4, 8);
         }
     }
 

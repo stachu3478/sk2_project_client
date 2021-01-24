@@ -26,6 +26,10 @@ public class Game {
         map.setUnit(unit);
     }
 
+    public Unit findUnit(int id) {
+        return units.get(id);
+    }
+
     public Collection<Player> getPlayers() {
         return players.values();
     }

@@ -24,8 +24,8 @@ public class Marker {
         this.markEndY = y;
     }
 
-    public void checkUnitSelection(Unit unit) {
-        unit.setSelected(  Math.min(markStartX, markEndX) < unit.getXPos() * tileSize
+    public boolean checkUnitSelection(Unit unit) {
+        return unit.setSelected(  Math.min(markStartX, markEndX) < unit.getXPos() * tileSize
                         && Math.max(markStartX, markEndX) > unit.getXPos() * tileSize - tileSize
                         && Math.min(markStartY, markEndY) < unit.getYPos() * tileSize
                         && Math.max(markStartY, markEndY) > unit.getYPos() * tileSize - tileSize);

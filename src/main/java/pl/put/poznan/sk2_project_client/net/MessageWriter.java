@@ -22,7 +22,8 @@ public class MessageWriter {
     }
 
     public void writeMessages() throws IOException {
-        channel.write(buffer);
+        int written = channel.write(buffer);
+        System.out.println(written + " bytes written");
         if (buffer.remaining() == 0) buffer.clear();
         else {
             System.out.println("Warning: Yielding data output of " + buffer.remaining() + " bytes. This is not handled. The app may crash.");

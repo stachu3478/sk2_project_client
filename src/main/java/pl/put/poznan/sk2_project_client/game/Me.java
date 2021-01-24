@@ -4,7 +4,9 @@ import pl.put.poznan.sk2_project_client.game.message.*;
 import pl.put.poznan.sk2_project_client.net.Client;
 import pl.put.poznan.sk2_project_client.net.ClientDisconnectionCallback;
 
+import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Me extends Player {
     private Client client;
@@ -56,6 +58,10 @@ public class Me extends Player {
         this.client.emit(new PlayMessage(nickname));
     }
 
+    public void moveUnits(ArrayList<Unit> units, Point target) throws IOException {
+        this.client.emit(new UnitMoveMessage(units.toArray(new Unit[0]), target.x, target.y));
+    }
+
     // Message handles: TODO: implement all required
     public void joinedLobby(GameMessage msg) {
         JoinMessage m = (JoinMessage) msg;
@@ -78,6 +84,11 @@ public class Me extends Player {
         for (Unit unit : m.getUnits()) {
             game.addUnit(unit);
         }
+    }
+
+    public void unitMoved(GameMessage msg) {
+        UnitMovedMessage m = (UnitMovedMessage) msg;
+        game.getMap().moveUnit(game.findUnit(m.getUnitId()), m.getToX(), m.getToY());
     }
 
     public Game getGame() {

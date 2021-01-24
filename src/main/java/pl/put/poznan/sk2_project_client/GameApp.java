@@ -32,6 +32,7 @@ public class GameApp {
             messageIdentifier.setJoinCallback(me::joinedLobby);
             messageIdentifier.setPlayerJoinCallback(me::playerJoined);
             messageIdentifier.setGameJoinCallback(me::joinedGame);
+            messageIdentifier.setUnitMovedCallback(me::unitMoved);
             me.setMessageIdentifier(messageIdentifier);
         }
     }
