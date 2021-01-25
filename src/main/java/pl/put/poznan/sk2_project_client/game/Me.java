@@ -62,6 +62,10 @@ public class Me extends Player {
         this.client.emit(new UnitMoveMessage(units.toArray(new Unit[0]), target.x, target.y));
     }
 
+    public void attackUnits(ArrayList<Unit> units, Unit target) throws IOException {
+        this.client.emit(new AttackMessage(units.toArray(new Unit[0]), target));
+    }
+
     // Message handles: TODO: implement all required
     public void joinedLobby(GameMessage msg) {
         JoinMessage m = (JoinMessage) msg;
@@ -89,6 +93,11 @@ public class Me extends Player {
     public void unitMoved(GameMessage msg) {
         UnitMovedMessage m = (UnitMovedMessage) msg;
         game.getMap().moveUnit(game.findUnit(m.getUnitId()), m.getToX(), m.getToY());
+    }
+
+    public void unitAttacked(GameMessage msg) {
+        UnitAttackedMessage m = (UnitAttackedMessage) msg;
+        game.findUnit(m.getAttackerUnitId()).attack(game.findUnit(m.getAttackedUnitId()), m.getAttackedUnitHitPoints());
     }
 
     public Game getGame() {

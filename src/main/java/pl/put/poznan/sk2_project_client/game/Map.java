@@ -33,20 +33,19 @@ public class Map {
         if (tile != null) tile.setUnit(null);
     }
 
-    public Color getColor(int x, int y) {
-        Tile tile = tiles[x][y];
-        if (tile == null) return null;
-        Unit unit = tile.getUnit();
-        if (unit == null) return null;
-        return unit.getColor();
-    }
-
-    public boolean getStroke(int x, int y) {
-        Tile tile = tiles[x][y];
+    public boolean isDanger(Point pos, Player me) {
+        if (!isBound(pos)) return false;
+        Tile tile = tiles[pos.x][pos.y];
         if (tile == null) return false;
         Unit unit = tile.getUnit();
         if (unit == null) return false;
-        return unit.isSelected();
+        return unit.getOwnerId() != me.getOwnerId();
+    }
+
+    public Unit getUnit(Point pos) {
+        Tile tile = tiles[pos.x][pos.y];
+        if (tile == null) return null;
+        return tile.getUnit();
     }
 
     public int getWidth() {
@@ -55,5 +54,9 @@ public class Map {
 
     public int getHeight() {
         return height;
+    }
+
+    private boolean isBound(Point pos) {
+        return pos.x > 0 && pos.y > 0 && pos.x < width && pos.y < height;
     }
 }

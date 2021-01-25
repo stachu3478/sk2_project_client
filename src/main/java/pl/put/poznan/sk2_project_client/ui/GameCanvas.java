@@ -8,30 +8,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class GameCanvas extends JPanel {
     private MapRenderer renderer;
     private TileCamera camera;
-    private int scrollingX = 0;
-    private int scrollingY = 0;
-    private Instant lastScrollTime = Instant.now();
-    private final static int SCROLLING_PIXELS_PER_SECOND = 200;
     private final static int RENDERING_PERIOD_MILLIS = 17; // 60 fps
     private final Timer renderingTimer = new Timer(RENDERING_PERIOD_MILLIS, (e) -> repaint());
     private Marker marker;
-    private Point mousePositionOffset;
+    private Point mousePositionOffset = new Point(0, 0);
     private ArrayList<Unit> selectedUnits = new ArrayList<>();
+    private Map map;
+    private Me me;
+    private boolean scrolledToMyDroids = false;
+    private Scroller scroller;
 
     public GameCanvas(Me me) {
         super();
-        renderer = new MapRenderer(me.getGame().getMap());
+        this.me = me;
+        renderer = new MapRenderer(map = me.getGame().getMap());
         camera = new TileCamera(getWidth(), getHeight());
-        Unit myUnit = me.getUnits().iterator().next();
-        camera.setCenter(myUnit.getXPos(), myUnit.getYPos());
+        scroller = new Scroller(camera);
         marker = camera.getMarker();
         renderer.setCamera(camera);
         renderingTimer.start(); // TODO: stop timer when left the game (ComponentListener not working)
@@ -53,15 +50,19 @@ public class GameCanvas extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 camera.setMarkPosition(e.getX(), e.getY(), false);
                 if (selectedUnits.isEmpty()) { // select units
-                    for (Iterator<Unit> it = me.getUnits().iterator(); it.hasNext(); ) {
-                        Unit unit = it.next();
+                    for (Unit unit : me.getUnits()) {
                         if (marker.checkUnitSelection(unit)) {
                             selectedUnits.add(unit);
                         }
                     }
-                } else { // move units
+                } else { // move or attack units
                     try {
-                        me.moveUnits(selectedUnits, camera.toTilePosition(new Point(e.getX(), e.getY())));
+                        Point pos = camera.toTilePosition(new Point(e.getX(), e.getY()));
+                        if (map.isDanger(pos, me)) {
+                            me.attackUnits(selectedUnits, map.getUnit(pos));
+                        } else {
+                            me.moveUnits(selectedUnits, pos);
+                        }
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                         try {
@@ -78,24 +79,24 @@ public class GameCanvas extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (Character.toLowerCase(e.getKeyChar()) == 'a') scrollingX = -1;
-                if (Character.toLowerCase(e.getKeyChar()) == 'd') scrollingX = 1;
-                if (Character.toLowerCase(e.getKeyChar()) == 'w') scrollingY = -1;
-                if (Character.toLowerCase(e.getKeyChar()) == 's') scrollingY = 1;
+                if (Character.toLowerCase(e.getKeyChar()) == 'a') scroller.setX(-1);
+                if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(1);
+                if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(-1);
+                if (Character.toLowerCase(e.getKeyChar()) == 's') scroller.setY(1);
                 if (Character.toLowerCase(e.getKeyChar()) == ' ') {
                     for (Unit unit : selectedUnits) unit.setSelected(false);
                     selectedUnits.clear();
                 }
-                processScrolling();
+                scroller.process(getRelativeMousePosition());
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (Character.toLowerCase(e.getKeyChar()) == 'a') scrollingX = 0;
-                if (Character.toLowerCase(e.getKeyChar()) == 'd') scrollingX = 0;
-                if (Character.toLowerCase(e.getKeyChar()) == 'w') scrollingY = 0;
-                if (Character.toLowerCase(e.getKeyChar()) == 's') scrollingY = 0;
-                processScrolling();
+                if (Character.toLowerCase(e.getKeyChar()) == 'a') scroller.setX(0);
+                if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(0);
+                if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(0);
+                if (Character.toLowerCase(e.getKeyChar()) == 's') scroller.setY(0);
+                scroller.process(getRelativeMousePosition());
             }
         });
     }
@@ -103,9 +104,14 @@ public class GameCanvas extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        processScrolling();
+        scroller.process(getRelativeMousePosition());
         Graphics2D graphics = (Graphics2D) g;
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
+        if (!scrolledToMyDroids && getSize().width > 0) {
+            Unit myUnit = me.getUnits().iterator().next();
+            camera.setCenter(myUnit.getXPos(), myUnit.getYPos());
+            scrolledToMyDroids = true;
+        }
         renderer.render(graphics);
         if (marker.isInProgress()) { // zaznaczamy zaznaczanie zaznaczenia
             graphics.setStroke(new BasicStroke(3));
@@ -115,22 +121,20 @@ public class GameCanvas extends JPanel {
             graphics.drawRect(r.x, r.y, r.width, r.height);
             graphics.fillRect(r.x, r.y, r.width, r.height);
         } else if (!selectedUnits.isEmpty()) { // celowniczek ;d
-            Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-            int mx = mousePosition.x - mousePositionOffset.x;
-            int my = mousePosition.y - mousePositionOffset.y;
-            graphics.setColor(new Color(200, 250, 250, 200));
-            graphics.fillRect(mx - 16, my - 2, 8, 4);
-            graphics.fillRect(mx + 8, my - 2, 8, 4);
-            graphics.fillRect(mx - 2, my - 16, 4, 8);
-            graphics.fillRect(mx - 2, my + 8, 4, 8);
+            Point m = getRelativeMousePosition();
+            Point tilePosition = camera.toTilePosition(m);
+            if (map.isDanger(tilePosition, me)) {
+                graphics.setColor(new Color(250, 0, 0, 200));
+            } else graphics.setColor(new Color(200, 250, 250, 200));
+            graphics.fillRect(m.x - 16, m.y - 2, 8, 4);
+            graphics.fillRect(m.x + 8, m.y - 2, 8, 4);
+            graphics.fillRect(m.x - 2, m.y - 16, 4, 8);
+            graphics.fillRect(m.x - 2, m.y + 8, 4, 8);
         }
     }
 
-    private void processScrolling() {
-        Instant now = Instant.now();
-        int millisBetweenLastScroll = (int)Duration.between(lastScrollTime, now).toMillis();
-        int pixelsToScroll = millisBetweenLastScroll * SCROLLING_PIXELS_PER_SECOND / 1000;
-        camera.scrollBy(pixelsToScroll * scrollingX, pixelsToScroll * scrollingY);
-        lastScrollTime = now;
+    private Point getRelativeMousePosition() {
+        Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+        return new Point(mousePosition.x - mousePositionOffset.x, mousePosition.y - mousePositionOffset.y);
     }
 }

@@ -64,6 +64,14 @@ public class TileCamera {
         if (scrollY < 0) scrollY = 0;
     }
 
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
     public interface TileCallback {
         int T_SIZE = TILE_SIZE;
         void call(int tileX, int tileY, int screenX, int screenY);

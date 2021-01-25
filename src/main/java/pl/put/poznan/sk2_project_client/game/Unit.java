@@ -9,10 +9,17 @@ public class Unit {
     private byte ownerId;
     private int id;
     private boolean selected;
+    private int attackedFrames = 0;
+    private int attackingFrames = 0;
 
     public Unit(byte ownerId) {
         this.ownerId = ownerId;
         this.percentHp = 100;
+    }
+
+    public void attack(Unit unit, byte newPercentHp) {
+        unit.setPercentHp(newPercentHp);
+        attackingFrames = 10;
     }
 
     public byte getPercentHp() {
@@ -20,7 +27,7 @@ public class Unit {
     }
 
     public void setPercentHp(byte percentHp) {
-        this.percentHp = percentHp;
+        this.percentHp = percentHp; attackedFrames = 30;
     }
 
     public int getXPos() {
@@ -68,7 +75,7 @@ public class Unit {
             case 3: return Color.YELLOW;
             case 4: return Color.MAGENTA;
             case 5: return Color.CYAN;
-            case 6: return new Color(150, 150, 100);
+            case 6: return new Color(255, 0, 255);
             case 7: return new Color(150, 100, 150);
             case 8: return new Color(100, 150, 150);
             case 9: return new Color(150, 250, 0);
@@ -82,5 +89,13 @@ public class Unit {
             case 17: return new Color(250, 250, 150); // PINK             PINK   PINK          PINK   PINK     PINK
         }
         return Color.BLACK;
+    }
+
+    public int getAttackedFrames() {
+        return attackedFrames--;
+    }
+
+    public int getAttackingFrames() {
+        return attackingFrames--;
     }
 }
