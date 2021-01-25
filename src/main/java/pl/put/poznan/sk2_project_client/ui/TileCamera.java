@@ -1,7 +1,6 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import pl.put.poznan.sk2_project_client.game.Tile;
-import pl.put.poznan.sk2_project_client.game.Unit;
+import pl.put.poznan.sk2_project_client.logic.Marker;
 
 import java.awt.*;
 

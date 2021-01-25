@@ -1,4 +1,4 @@
-package pl.put.poznan.sk2_project_client.ui;
+package pl.put.poznan.sk2_project_client.logic;
 
 import pl.put.poznan.sk2_project_client.game.Unit;
 

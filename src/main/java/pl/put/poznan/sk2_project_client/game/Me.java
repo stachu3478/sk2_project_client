@@ -15,6 +15,7 @@ public class Me extends Player {
     private Game game;
     private String address;
     private int port;
+    private final UnitSelector unitSelector = new UnitSelector();
 
     public Me(String address, int port) {
         super("", (byte) -1);
@@ -100,6 +101,12 @@ public class Me extends Player {
         game.findUnit(m.getAttackerUnitId()).attack(game.findUnit(m.getAttackedUnitId()), m.getAttackedUnitHitPoints());
     }
 
+    public void unitDestroyed(GameMessage msg) {
+        UnitDestroyedMessage m = (UnitDestroyedMessage) msg;
+        unitSelector.unselect(game.findUnit(m.getDestroyedUnitId()));
+        game.removeUnit(m.getDestroyedUnitId());
+    }
+
     public Game getGame() {
         return game;
     }
@@ -112,7 +119,7 @@ public class Me extends Player {
         return inGame;
     }
 
-    public void selectFor(long milliseconds) throws IOException {
-        client.selectFor(milliseconds);
+    public UnitSelector getUnitSelector() {
+        return unitSelector;
     }
 }

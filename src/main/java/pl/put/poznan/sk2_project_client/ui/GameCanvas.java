@@ -3,6 +3,7 @@ package pl.put.poznan.sk2_project_client.ui;
 import pl.put.poznan.sk2_project_client.game.Map;
 import pl.put.poznan.sk2_project_client.game.Me;
 import pl.put.poznan.sk2_project_client.game.Unit;
+import pl.put.poznan.sk2_project_client.logic.Marker;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +18,6 @@ public class GameCanvas extends JPanel {
     private final Timer renderingTimer = new Timer(RENDERING_PERIOD_MILLIS, (e) -> repaint());
     private Marker marker;
     private Point mousePositionOffset = new Point(0, 0);
-    private ArrayList<Unit> selectedUnits = new ArrayList<>();
     private Map map;
     private Me me;
     private boolean scrolledToMyDroids = false;
@@ -31,6 +31,7 @@ public class GameCanvas extends JPanel {
         scroller = new Scroller(camera);
         marker = camera.getMarker();
         renderer.setCamera(camera);
+        renderer.setMyOwnerId(me.getOwnerId());
         renderingTimer.start(); // TODO: stop timer when left the game (ComponentListener not working)
         setFocusable(true);
         addMouseListener(new MouseAdapter() {
@@ -49,19 +50,15 @@ public class GameCanvas extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 camera.setMarkPosition(e.getX(), e.getY(), false);
-                if (selectedUnits.isEmpty()) { // select units
-                    for (Unit unit : me.getUnits()) {
-                        if (marker.checkUnitSelection(unit)) {
-                            selectedUnits.add(unit);
-                        }
-                    }
+                if (me.getUnitSelector().isEmpty()) { // select units
+                    me.getUnitSelector().select(marker, me.getUnits());
                 } else { // move or attack units
                     try {
-                        Point pos = camera.toTilePosition(new Point(e.getX(), e.getY()));
+                        Point pos = renderer.getHoveredTile();
                         if (map.isDanger(pos, me)) {
-                            me.attackUnits(selectedUnits, map.getUnit(pos));
+                            me.attackUnits(me.getUnitSelector().getSelectedUnits(), map.getUnit(pos));
                         } else {
-                            me.moveUnits(selectedUnits, pos);
+                            me.moveUnits(me.getUnitSelector().getSelectedUnits(), pos);
                         }
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
@@ -71,8 +68,7 @@ public class GameCanvas extends JPanel {
                             exception.printStackTrace();
                         }
                     }
-                    for (Unit unit : selectedUnits) unit.setSelected(false);
-                    selectedUnits.clear();
+                    me.getUnitSelector().clear();
                 }
             }
         });
@@ -83,10 +79,7 @@ public class GameCanvas extends JPanel {
                 if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(1);
                 if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(-1);
                 if (Character.toLowerCase(e.getKeyChar()) == 's') scroller.setY(1);
-                if (Character.toLowerCase(e.getKeyChar()) == ' ') {
-                    for (Unit unit : selectedUnits) unit.setSelected(false);
-                    selectedUnits.clear();
-                }
+                if (Character.toLowerCase(e.getKeyChar()) == ' ') me.getUnitSelector().clear();
                 scroller.process(getRelativeMousePosition());
             }
 
@@ -107,6 +100,9 @@ public class GameCanvas extends JPanel {
         scroller.process(getRelativeMousePosition());
         Graphics2D graphics = (Graphics2D) g;
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
+        Point m = getRelativeMousePosition();
+        Point tilePosition = camera.toTilePosition(m);
+        renderer.setHoveredTile(tilePosition);
         if (!scrolledToMyDroids && getSize().width > 0) {
             Unit myUnit = me.getUnits().iterator().next();
             camera.setCenter(myUnit.getXPos(), myUnit.getYPos());
@@ -120,9 +116,7 @@ public class GameCanvas extends JPanel {
             Rectangle r = camera.getMarkRectangle(mousePosition.x - mousePositionOffset.x, mousePosition.y - mousePositionOffset.y);
             graphics.drawRect(r.x, r.y, r.width, r.height);
             graphics.fillRect(r.x, r.y, r.width, r.height);
-        } else if (!selectedUnits.isEmpty()) { // celowniczek ;d
-            Point m = getRelativeMousePosition();
-            Point tilePosition = camera.toTilePosition(m);
+        } else if (!me.getUnitSelector().isEmpty()) { // celowniczek ;d
             if (map.isDanger(tilePosition, me)) {
                 graphics.setColor(new Color(250, 0, 0, 200));
             } else graphics.setColor(new Color(200, 250, 250, 200));

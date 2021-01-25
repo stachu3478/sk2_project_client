@@ -3,8 +3,8 @@ package pl.put.poznan.sk2_project_client.game;
 import java.awt.*;
 
 public class Map {
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private final Tile[][] tiles;
 
     public Map(int width, int height) {
@@ -35,9 +35,7 @@ public class Map {
 
     public boolean isDanger(Point pos, Player me) {
         if (!isBound(pos)) return false;
-        Tile tile = tiles[pos.x][pos.y];
-        if (tile == null) return false;
-        Unit unit = tile.getUnit();
+        Unit unit = getUnit(pos);
         if (unit == null) return false;
         return unit.getOwnerId() != me.getOwnerId();
     }

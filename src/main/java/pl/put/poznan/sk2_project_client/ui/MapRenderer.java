@@ -10,8 +10,8 @@ public class MapRenderer {
     private final Map map;
     private TileCamera camera;
     private final DrawTileCallback tileCallback = new DrawTileCallback();
-    private Dimension markStart;
-    private Dimension markEnd;
+    private Point hoveredTile = new Point(-1, -1);
+    private byte myOwnerId;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -20,6 +20,18 @@ public class MapRenderer {
     public void setCamera(TileCamera camera) {
         this.camera = camera;
         camera.setMapSize(map.getWidth(), map.getHeight());
+    }
+
+    public void setHoveredTile(Point tilePos) {
+        this.hoveredTile = tilePos;
+    }
+
+    public Point getHoveredTile() {
+        return this.hoveredTile;
+    }
+
+    public void setMyOwnerId(byte ownerId) {
+        this.myOwnerId = ownerId;
     }
 
     public void render(Graphics2D graphics2D) {
@@ -44,9 +56,17 @@ public class MapRenderer {
             }
             graphics2D.fillRect(screenX, screenY, T_SIZE, T_SIZE);
             if (unit != null) {
-                if (unit.isSelected()) {
+                boolean shouldRenderHpBar = unit.isSelected() || (hoveredTile.x == tileX && hoveredTile.y == tileY);
+                if (shouldRenderHpBar) {
                     graphics2D.setColor(Color.BLACK);
                     graphics2D.drawRect(screenX, screenY, T_SIZE, T_SIZE);
+                    graphics2D.setStroke(new BasicStroke(7));
+                    graphics2D.fillRect(screenX + 3, screenY + T_SIZE - 10, T_SIZE - 6, 7);
+                    boolean isMy = myOwnerId == unit.getOwnerId();
+                    graphics2D.setColor(isMy ? Color.GREEN : Color.RED);
+                    int hpBarMaxLength = T_SIZE - 8;
+                    int hpBarLength = unit.getPercentHp() * hpBarMaxLength / 100;
+                    graphics2D.fillRect(screenX + 4, screenY + T_SIZE - 11, hpBarLength, 5);
                 }
                 int attackFrames = unit.getAttackingFrames();
                 if (attackFrames > 0) {
