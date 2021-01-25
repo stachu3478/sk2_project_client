@@ -47,9 +47,9 @@ public class TileCamera {
 
     public void iterateVisibleTiles(TileCallback callback) {
         int tileX = scrollX / TILE_SIZE;
-        for (int screenX = -scrollX % TILE_SIZE - TILE_SIZE; screenX < screenWidth && tileX < mapWidth; screenX += TILE_SIZE, tileX++ ) {
+        for (int screenX = -scrollX % TILE_SIZE; screenX < screenWidth && tileX < mapWidth; screenX += TILE_SIZE, tileX++ ) {
             int tileY = scrollY / TILE_SIZE;
-            for (int screenY = -scrollY % TILE_SIZE - TILE_SIZE; screenY < screenHeight && tileY < mapHeight; screenY += TILE_SIZE, tileY++) {
+            for (int screenY = -scrollY % TILE_SIZE; screenY < screenHeight && tileY < mapHeight; screenY += TILE_SIZE, tileY++) {
                 callback.call(tileX, tileY, screenX, screenY);
             }
         }
@@ -57,9 +57,9 @@ public class TileCamera {
 
     private void fitIntoMap() {
         if (screenWidth == 0 || screenHeight == 0) return;
-        if (scrollX + screenWidth > TILE_SIZE * mapWidth - TILE_SIZE) scrollX = TILE_SIZE * mapWidth - screenWidth - TILE_SIZE;
+        if (scrollX + screenWidth > TILE_SIZE * mapWidth) scrollX = TILE_SIZE * mapWidth - screenWidth;
         if (scrollX < 0) scrollX = 0;
-        if (scrollY + screenHeight > TILE_SIZE * mapHeight - TILE_SIZE) scrollY = TILE_SIZE * mapHeight - screenHeight - TILE_SIZE;
+        if (scrollY + screenHeight > TILE_SIZE * mapHeight) scrollY = TILE_SIZE * mapHeight - screenHeight;
         if (scrollY < 0) scrollY = 0;
     }
 
@@ -81,7 +81,7 @@ public class TileCamera {
     }
 
     public Point toTilePosition(Point screenPosition) {
-        return new Point((screenPosition.x + scrollX) / TILE_SIZE + 1, (screenPosition.y + scrollY) / TILE_SIZE + 1);
+        return new Point((screenPosition.x + scrollX) / TILE_SIZE, (screenPosition.y + scrollY) / TILE_SIZE);
     }
 
     public void setMarkPosition(int x, int y, boolean initial) {

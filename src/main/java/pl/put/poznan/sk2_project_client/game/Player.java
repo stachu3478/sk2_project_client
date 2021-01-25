@@ -18,7 +18,8 @@ public class Player {
     }
 
     public String getNickname() {
-        return nickname;
+        if (nickname.length() > 0) return nickname;
+        return "An unnamed manager";
     }
 
     public void addUnit(Unit unit) {

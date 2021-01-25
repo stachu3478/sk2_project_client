@@ -44,24 +44,11 @@ public class Client {
         }
     }
 
-    public Object selectFor(long milliseconds) throws IOException {
-        Instant start = Instant.now();
-        if (messageIdentifier == null || !this.channel.isConnected()) return null;
-
-        selector.select(milliseconds);
-        this.messageIdentifier.readMessages();
-
-        Instant finish = Instant.now();
-        long elapsed = Duration.between(start, finish).toMillis();
-        if (elapsed < milliseconds) {
-            return selectFor(elapsed - milliseconds); // heaps off!
-        }
-        return null;
-    }
-
     public void select() throws IOException {
-        selector.select();
-        if (!this.messageIdentifier.readMessages()) channel.close();
+        if (selector != null) {
+            selector.select();
+            if (!this.messageIdentifier.readMessages()) channel.close();
+        }
     }
 
     public SocketChannel getChannel() {

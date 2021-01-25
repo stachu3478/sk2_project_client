@@ -59,13 +59,13 @@ public class MapRenderer {
                 boolean shouldRenderHpBar = unit.isSelected() || (hoveredTile.x == tileX && hoveredTile.y == tileY);
                 if (shouldRenderHpBar) {
                     graphics2D.setColor(Color.BLACK);
+                    graphics2D.setStroke(new BasicStroke(3));
                     graphics2D.drawRect(screenX, screenY, T_SIZE, T_SIZE);
-                    graphics2D.setStroke(new BasicStroke(7));
                     graphics2D.fillRect(screenX + 3, screenY + T_SIZE - 10, T_SIZE - 6, 7);
                     boolean isMy = myOwnerId == unit.getOwnerId();
                     graphics2D.setColor(isMy ? Color.GREEN : Color.RED);
                     int hpBarMaxLength = T_SIZE - 8;
-                    int hpBarLength = unit.getPercentHp() * hpBarMaxLength / 100;
+                    int hpBarLength = (unit.getPercentHp() * hpBarMaxLength) / 100;
                     graphics2D.fillRect(screenX + 4, screenY + T_SIZE - 11, hpBarLength, 5);
                 }
                 int attackFrames = unit.getAttackingFrames();

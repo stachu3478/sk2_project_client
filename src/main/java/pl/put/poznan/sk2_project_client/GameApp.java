@@ -35,6 +35,7 @@ public class GameApp {
             messageIdentifier.setUnitMovedCallback(me::unitMoved);
             messageIdentifier.setUnitAttackedCallback(me::unitAttacked);
             messageIdentifier.setUnitDestroyedCallback(me::unitDestroyed);
+            messageIdentifier.setUnitSpawnedCallback(me::unitSpawned);
             me.setMessageIdentifier(messageIdentifier);
         }
     }

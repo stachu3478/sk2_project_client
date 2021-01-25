@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class GameCanvas extends JPanel {
     private MapRenderer renderer;
@@ -79,7 +78,10 @@ public class GameCanvas extends JPanel {
                 if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(1);
                 if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(-1);
                 if (Character.toLowerCase(e.getKeyChar()) == 's') scroller.setY(1);
-                if (Character.toLowerCase(e.getKeyChar()) == ' ') me.getUnitSelector().clear();
+                if (Character.toLowerCase(e.getKeyChar()) == ' ') {
+                    if (me.getUnitSelector().isEmpty()) me.getUnitSelector().select(me.getUnits());
+                    else me.getUnitSelector().clear();
+                }
                 scroller.process(getRelativeMousePosition());
             }
 
@@ -97,17 +99,21 @@ public class GameCanvas extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        scroller.process(getRelativeMousePosition());
+        if (hasFocus()) scroller.process(getRelativeMousePosition());
         Graphics2D graphics = (Graphics2D) g;
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
-        Point m = getRelativeMousePosition();
-        Point tilePosition = camera.toTilePosition(m);
-        renderer.setHoveredTile(tilePosition);
         if (!scrolledToMyDroids && getSize().width > 0) {
             Unit myUnit = me.getUnits().iterator().next();
             camera.setCenter(myUnit.getXPos(), myUnit.getYPos());
             scrolledToMyDroids = true;
         }
+        if (!hasFocus()) {
+            renderer.render(graphics);
+            return;
+        }
+        Point m = getRelativeMousePosition();
+        Point tilePosition = camera.toTilePosition(m);
+        renderer.setHoveredTile(tilePosition);
         renderer.render(graphics);
         if (marker.isInProgress()) { // zaznaczamy zaznaczanie zaznaczenia
             graphics.setStroke(new BasicStroke(3));

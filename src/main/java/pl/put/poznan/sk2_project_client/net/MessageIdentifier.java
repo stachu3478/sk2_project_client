@@ -17,14 +17,19 @@ public abstract class MessageIdentifier {
         this.channel = channel;
     }
 
-    public boolean readMessages() throws IOException {
+    public boolean readMessages() {
         int read = 0;
         int bufferMultiplier = 1;
         do {
             buffer.flip();
             ByteBuffer buff = ByteBuffer.allocate((buffer.remaining() + 16 + read) * bufferMultiplier);
             buff.put(buffer);
-            read = channel.read(buff);
+            try {
+                read = channel.read(buff);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
             buff.flip();
             createMessages(buff);
             if (read == -1) {

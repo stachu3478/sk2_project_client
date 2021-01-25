@@ -107,6 +107,11 @@ public class Me extends Player {
         game.removeUnit(m.getDestroyedUnitId());
     }
 
+    public void unitSpawned(GameMessage msg) {
+        UnitSpawnedMessage m = (UnitSpawnedMessage) msg;
+        game.addUnit(m.getUnit());
+    }
+
     public Game getGame() {
         return game;
     }

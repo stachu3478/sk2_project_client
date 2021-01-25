@@ -25,10 +25,10 @@ public class Marker {
     }
 
     public boolean checkUnitSelection(Unit unit) {
-        return unit.setSelected(  Math.min(markStartX, markEndX) < unit.getXPos() * tileSize
-                        && Math.max(markStartX, markEndX) > unit.getXPos() * tileSize - tileSize
-                        && Math.min(markStartY, markEndY) < unit.getYPos() * tileSize
-                        && Math.max(markStartY, markEndY) > unit.getYPos() * tileSize - tileSize);
+        return unit.setSelected(  Math.min(markStartX, markEndX) < unit.getXPos() * tileSize + tileSize
+                        && Math.max(markStartX, markEndX) > unit.getXPos() * tileSize
+                        && Math.min(markStartY, markEndY) < unit.getYPos() * tileSize + tileSize
+                        && Math.max(markStartY, markEndY) > unit.getYPos() * tileSize);
     }
 
     public void setTileSize(int tileSize) {

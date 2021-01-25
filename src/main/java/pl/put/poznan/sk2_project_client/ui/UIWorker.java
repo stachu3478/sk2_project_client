@@ -29,7 +29,7 @@ public class UIWorker extends SwingWorker<Void, Object> {
         synchronized (me) {
             try {
                 me.getClient().select();
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }

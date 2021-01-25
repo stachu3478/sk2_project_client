@@ -26,11 +26,11 @@ public class Scroller {
     }
 
     public void process(Point mousePosition) {
-        if (mousePosition.x < 50) mScrollingX = -1;
-        else if (mousePosition.x > camera.getScreenWidth() - 50) mScrollingX = 1;
+        if (mousePosition.x < 50 && mousePosition.x > 0) mScrollingX = -1;
+        else if (mousePosition.x > camera.getScreenWidth() - 50 && mousePosition.x < camera.getScreenWidth()) mScrollingX = 1;
         else mScrollingX = 0;
-        if (mousePosition.y < 50) mScrollingY = -1;
-        else if (mousePosition.y > camera.getScreenHeight() - 50 ) mScrollingY = 1;
+        if (mousePosition.y < 50 && mousePosition.y > 0) mScrollingY = -1;
+        else if (mousePosition.y > camera.getScreenHeight() - 50 && mousePosition.y < camera.getScreenHeight()) mScrollingY = 1;
         else mScrollingY = 0;
         Instant now = Instant.now();
         int millisBetweenLastScroll = (int) Duration.between(lastScrollTime, now).toMillis();

@@ -25,6 +25,13 @@ public class UnitSelector {
         }
     }
 
+    public void select(Collection<Unit> units) {
+        for (Unit unit : units) {
+            unit.setSelected(true);
+            selectedUnits.add(unit);
+        }
+    }
+
     public void unselect(Unit unit) {
         selectedUnits.remove(unit);
     }
