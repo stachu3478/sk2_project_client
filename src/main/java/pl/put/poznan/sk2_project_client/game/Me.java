@@ -59,12 +59,16 @@ public class Me extends Player {
         this.client.emit(new PlayMessage(nickname));
     }
 
-    public void moveUnits(ArrayList<Unit> units, Point target) throws IOException {
+    public void moveUnits(ArrayList<Unit> units, Point target) {
         this.client.emit(new UnitMoveMessage(units.toArray(new Unit[0]), target.x, target.y));
     }
 
-    public void attackUnits(ArrayList<Unit> units, Unit target) throws IOException {
+    public void attackUnits(ArrayList<Unit> units, Unit target) {
         this.client.emit(new AttackMessage(units.toArray(new Unit[0]), target));
+    }
+
+    public void leaveGame() {
+        this.client.emit(new LeaveGameMessage());
     }
 
     // Message handles: TODO: implement all required
@@ -98,7 +102,8 @@ public class Me extends Player {
 
     public void unitAttacked(GameMessage msg) {
         UnitAttackedMessage m = (UnitAttackedMessage) msg;
-        game.findUnit(m.getAttackerUnitId()).attack(game.findUnit(m.getAttackedUnitId()), m.getAttackedUnitHitPoints());
+        Unit attacker = game.findUnit(m.getAttackerUnitId());
+        if (attacker != null) attacker.attack(game.findUnit(m.getAttackedUnitId()), m.getAttackedUnitHitPoints());
     }
 
     public void unitDestroyed(GameMessage msg) {
@@ -110,6 +115,10 @@ public class Me extends Player {
     public void unitSpawned(GameMessage msg) {
         UnitSpawnedMessage m = (UnitSpawnedMessage) msg;
         game.addUnit(m.getUnit());
+    }
+
+    public void leftGame(GameMessage m) {
+        inGame = false;
     }
 
     public Game getGame() {

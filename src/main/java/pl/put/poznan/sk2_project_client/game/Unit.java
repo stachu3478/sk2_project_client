@@ -18,7 +18,7 @@ public class Unit {
     }
 
     public void attack(Unit unit, byte newPercentHp) {
-        unit.setPercentHp(newPercentHp);
+        if (unit != null) unit.setPercentHp(newPercentHp);
         attackingFrames = 10;
     }
 

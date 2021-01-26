@@ -1,5 +1,7 @@
 package pl.put.poznan.sk2_project_client.net;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -45,7 +47,7 @@ public class Client {
     }
 
     public void select() throws IOException {
-        if (selector != null) {
+        if (selector != null && channel != null) {
             selector.select();
             if (!this.messageIdentifier.readMessages()) channel.close();
         }
@@ -72,14 +74,24 @@ public class Client {
 
     public void setMessageIdentifier(MessageIdentifier messageIdentifier) {
         this.messageIdentifier = messageIdentifier;
+        messageIdentifier.setChannel(channel);
     }
 
     public void onDisconnection(ClientDisconnectionCallback disconnectionCallback) {
         this.disconnectionCallback = disconnectionCallback;
     }
 
-    public void emit(MessageOut message) throws IOException {
-        this.messageWriter.emit(message);
+    public void emit(MessageOut message) {
+        try {
+            this.messageWriter.emit(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+                if (this.channel != null) this.channel.close();
+            } catch (IOException err) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void flush() throws IOException {

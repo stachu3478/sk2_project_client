@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SwappablePanel {
-    protected JPanel panel = new JPanel();
+    protected JPanel panel = new DrawingPanel();
     protected JFrame frame;
 
     public SwappablePanel() {
@@ -20,16 +20,34 @@ public class SwappablePanel {
         frame.revalidate();
         frame.repaint();
         panel.setVisible(true);
+        mounted();
     }
 
     void unset() {
         frame.remove(panel);
         panel.setVisible(false);
+        dismounted();
     }
 
     public JPanel getPanel() {
         return panel;
     }
 
-    public void update() {};
+    public void update() {}
+
+    public void draw(Graphics2D g) {}
+
+    /**
+     * Function fires when the panel is dismounted and mounted
+     */
+    public void dismounted() {}
+    public void mounted() {}
+
+    private class DrawingPanel extends JPanel {
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            draw((Graphics2D) g);
+        }
+    }
 }

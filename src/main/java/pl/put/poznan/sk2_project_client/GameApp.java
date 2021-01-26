@@ -3,6 +3,8 @@ package pl.put.poznan.sk2_project_client;
 import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
 import pl.put.poznan.sk2_project_client.game.Me;
 import pl.put.poznan.sk2_project_client.ui.GameUI;
+import pl.put.poznan.sk2_project_client.ui.ImageLoader;
+import pl.put.poznan.sk2_project_client.ui.rotary_menu.MenuItem;
 
 import java.awt.*;
 
@@ -27,6 +29,14 @@ public class GameApp {
             ui = new GameUI(me);
         });
 
+        ImageLoader loader = new ImageLoader()
+                .loadImage("play", "/play.png")
+                .loadImage("change", "/change.png")
+                .loadImage("exit", "/exit.png")
+                .loadImage("ok", "/ok.png")
+                .loadImage("cancel", "/cancel.png");
+        MenuItem.useLoader(loader);
+
         synchronized (me) {
             messageIdentifier = new GameMessageIdentifier(me);
             messageIdentifier.setJoinCallback(me::joinedLobby);
@@ -36,6 +46,7 @@ public class GameApp {
             messageIdentifier.setUnitAttackedCallback(me::unitAttacked);
             messageIdentifier.setUnitDestroyedCallback(me::unitDestroyed);
             messageIdentifier.setUnitSpawnedCallback(me::unitSpawned);
+            messageIdentifier.setGameLeftCallback(me::leftGame);
             me.setMessageIdentifier(messageIdentifier);
         }
     }

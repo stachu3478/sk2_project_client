@@ -5,6 +5,7 @@ import pl.put.poznan.sk2_project_client.game.Me;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class GameUI {
     private final Me me;
@@ -29,6 +30,11 @@ public class GameUI {
 
             @Override
             public void windowClosed(WindowEvent e) {
+                try {
+                    me.disconnect();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 System.exit(0);
             }
 

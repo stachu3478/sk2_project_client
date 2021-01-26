@@ -16,6 +16,7 @@ public class GameMessageIdentifier extends MessageIdentifier {
     private GameMessage.ReceivedCallback unitAttackedCallback;
     private GameMessage.ReceivedCallback unitDestroyedCallback;
     private GameMessage.ReceivedCallback unitSpawnedCallback;
+    private GameMessage.ReceivedCallback gameLeftCallback;
 
     public GameMessageIdentifier(Me me) {
         super();
@@ -37,6 +38,7 @@ public class GameMessageIdentifier extends MessageIdentifier {
         else if (messageType == 4) message = new UnitAttackedMessage(unitAttackedCallback);
         else if (messageType == 5) message = new UnitDestroyedMessage(unitDestroyedCallback);
         else if (messageType == 6) message = new UnitSpawnedMessage(unitSpawnedCallback);
+        else if (messageType == 7) message = new GameLeftMessage(gameLeftCallback);
         // else if (one message more and ... i'll explode!)
         // ... more message type verifies
         else throw new InvalidMessageError("Unknown message type: " + messageType);
@@ -71,5 +73,9 @@ public class GameMessageIdentifier extends MessageIdentifier {
 
     public void setUnitSpawnedCallback(GameMessage.ReceivedCallback unitSpawnedCallback) {
         this.unitSpawnedCallback = unitSpawnedCallback;
+    }
+
+    public void setGameLeftCallback(GameMessage.ReceivedCallback gameLeftCallback) {
+        this.gameLeftCallback = gameLeftCallback;
     }
 }

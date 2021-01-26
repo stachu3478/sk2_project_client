@@ -8,23 +8,27 @@ import pl.put.poznan.sk2_project_client.logic.Marker;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 
 public class GameCanvas extends JPanel {
-    private MapRenderer renderer;
-    private TileCamera camera;
+    private final MapRenderer renderer;
+    private final TileCamera camera;
     private final static int RENDERING_PERIOD_MILLIS = 17; // 60 fps
     private final Timer renderingTimer = new Timer(RENDERING_PERIOD_MILLIS, (e) -> repaint());
     private Marker marker;
     private Point mousePositionOffset = new Point(0, 0);
-    private Map map;
-    private Me me;
+    private final Map map;
+    private final Me me;
     private boolean scrolledToMyDroids = false;
     private Scroller scroller;
+    private final InGameMenu menu;
 
     public GameCanvas(Me me) {
         super();
         this.me = me;
+        menu = new InGameMenu(me);
         renderer = new MapRenderer(map = me.getGame().getMap());
         camera = new TileCamera(getWidth(), getHeight());
         scroller = new Scroller(camera);
@@ -33,14 +37,24 @@ public class GameCanvas extends JPanel {
         renderer.setMyOwnerId(me.getOwnerId());
         renderingTimer.start(); // TODO: stop timer when left the game (ComponentListener not working)
         setFocusable(true);
+        requestFocusInWindow();
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                super.mouseMoved(e);
+                menu.processHover(new Point(e.getX(), e.getY()));
+            }
+        });
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                menu.processClick(new Point(e.getX(), e.getY()));
                 requestFocusInWindow();
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if (menu.isActive()) return;
                 Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
                 mousePositionOffset = new Point(absoluteMousePosition.x - e.getX(),absoluteMousePosition.y - e.getY());
                 camera.setMarkPosition(e.getX(), e.getY(), true);
@@ -48,24 +62,16 @@ public class GameCanvas extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (menu.isActive()) return;
                 camera.setMarkPosition(e.getX(), e.getY(), false);
                 if (me.getUnitSelector().isEmpty()) { // select units
                     me.getUnitSelector().select(marker, me.getUnits());
                 } else { // move or attack units
-                    try {
-                        Point pos = renderer.getHoveredTile();
-                        if (map.isDanger(pos, me)) {
-                            me.attackUnits(me.getUnitSelector().getSelectedUnits(), map.getUnit(pos));
-                        } else {
-                            me.moveUnits(me.getUnitSelector().getSelectedUnits(), pos);
-                        }
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                        try {
-                            me.disconnect();
-                        } catch (IOException exception) {
-                            exception.printStackTrace();
-                        }
+                    Point pos = renderer.getHoveredTile();
+                    if (map.isDanger(pos, me)) {
+                        me.attackUnits(me.getUnitSelector().getSelectedUnits(), map.getUnit(pos));
+                    } else {
+                        me.moveUnits(me.getUnitSelector().getSelectedUnits(), pos);
                     }
                     me.getUnitSelector().clear();
                 }
@@ -74,6 +80,8 @@ public class GameCanvas extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == 27) menu.setActive(!menu.isActive());
+                if (menu.isActive()) return;
                 if (Character.toLowerCase(e.getKeyChar()) == 'a') scroller.setX(-1);
                 if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(1);
                 if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(-1);
@@ -87,6 +95,7 @@ public class GameCanvas extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
+                if (menu.isActive()) return;
                 if (Character.toLowerCase(e.getKeyChar()) == 'a') scroller.setX(0);
                 if (Character.toLowerCase(e.getKeyChar()) == 'd') scroller.setX(0);
                 if (Character.toLowerCase(e.getKeyChar()) == 'w') scroller.setY(0);
@@ -109,6 +118,7 @@ public class GameCanvas extends JPanel {
         }
         if (!hasFocus()) {
             renderer.render(graphics);
+            menu.render(graphics);
             return;
         }
         Point m = getRelativeMousePosition();
@@ -131,6 +141,7 @@ public class GameCanvas extends JPanel {
             graphics.fillRect(m.x - 2, m.y - 16, 4, 8);
             graphics.fillRect(m.x - 2, m.y + 8, 4, 8);
         }
+        menu.render(graphics);
     }
 
     private Point getRelativeMousePosition() {
