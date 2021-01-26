@@ -13,6 +13,7 @@ public class RotaryMenu {
     private int unSpreadingFrames = 0;
     private MenuItem selectedItem;
     private boolean shown = false;
+    private String defaultText = "";
 
     public void render(Graphics2D g) {
         processSpreadingFrames();
@@ -22,14 +23,11 @@ public class RotaryMenu {
             if (item == selectedItem) {
                 RescaleOp op = new RescaleOp(new float[]{1f}, new float[]{50f}, null);
                 g.drawImage(image, op, (int)Math.round(x) - image.getWidth() / 2, (int)Math.round(y) - image.getHeight() / 2);
-                g.setColor(Color.LIGHT_GRAY);
-                g.setStroke(new BasicStroke(2));
-                g.setFont(new Font("Consolas", Font.PLAIN, 12));
-                int textWidth = g.getFontMetrics().stringWidth(item.getName());
-                g.drawString(item.getName(), position.x - textWidth / 2, position.y + g.getFontMetrics().getHeight() / 2);
+                printCentralText(g, item.getName());
             } else {
                 g.drawImage(image, (int)Math.round(x)  - image.getWidth() / 2, (int)Math.round(y) - image.getHeight() / 2, null);
             }
+            if (selectedItem == null) printCentralText(g, defaultText);
             return true;
         });
     }
@@ -66,6 +64,18 @@ public class RotaryMenu {
         items.add(item);
     }
 
+    public void removeItem(String name) {
+        MenuItem item = null;
+        for (MenuItem i : items) {
+            if (i.getName().equals(name)) item = i;
+        }
+        if (item != null) items.remove(item);
+    }
+
+    public void setDefaultText(String defaultText) {
+        this.defaultText = defaultText;
+    }
+
     private void processSpreadingFrames() {
         if (shown) {
             if (unSpreadingFrames < SPREADING_FRAMES) unSpreadingFrames++;
@@ -86,6 +96,14 @@ public class RotaryMenu {
             rotationOffset += angleStep;
             if (!callback.call(item, x, y)) return;
         }
+    }
+
+    private void printCentralText(Graphics2D g, String text) {
+        g.setColor(Color.LIGHT_GRAY);
+        g.setStroke(new BasicStroke(2));
+        g.setFont(new Font("Consolas", Font.PLAIN, 12));
+        int textWidth = g.getFontMetrics().stringWidth(text);
+        g.drawString(text, position.x - textWidth / 2, position.y + g.getFontMetrics().getHeight() / 2);
     }
 
     private interface ItemCallback {

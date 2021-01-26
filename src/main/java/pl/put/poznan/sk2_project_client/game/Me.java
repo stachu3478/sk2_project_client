@@ -136,4 +136,8 @@ public class Me extends Player {
     public UnitSelector getUnitSelector() {
         return unitSelector;
     }
+
+    public void changeGame() {
+        this.client.emit(new ChangeGameMessage());
+    }
 }

@@ -27,9 +27,16 @@ public class InGameMenu {
         }
         menu.setPosition(new Point(bounds.width / 2, bounds.height / 2));
         menu.render(g);
+        if (me.getGame().isFinishedFor(me)) {
+            if (me.getGame().isWinner(me)) menu.setDefaultText("You win");
+            else menu.setDefaultText("You lost");
+            setActive(true);
+            menu.removeItem("Back to game");
+        }
     }
 
     public void setActive(boolean active) {
+        if (!active && me.getGame().isFinishedFor(me)) return;
         this.menu.setShown(active);
         this.active = active;
     }
@@ -42,8 +49,9 @@ public class InGameMenu {
         if (!active) return;
         MenuItem item = this.menu.getItemAtPosition(p, 20);
         if (item == null) return;
-        if (item.getName().equals("Back to game")) setActive(false);
+        if (item.getName().equals("Change game")) me.changeGame();
         if (item.getName().equals("Leave game")) me.leaveGame();
+        setActive(false);
         // TODO: leave / change game
     }
 

@@ -14,6 +14,22 @@ public class Game {
         map = new Map(config.getMapWidth(), config.getMapHeight());
     }
 
+    public boolean isFinishedFor(Player player) {
+        if (player.getUnits().isEmpty()) return true;
+        for (Player p : players.values()) {
+            if (!p.getUnits().isEmpty()) return isWinner(p);
+        }
+        return true;
+    }
+
+    public boolean isWinner(Player player) {
+        if (player.getUnits().isEmpty()) return false;
+        for (Player p : players.values()) {
+            if (!p.getUnits().isEmpty() && p != player) return false;
+        }
+        return true;
+    }
+
     public void addPlayer(Player player) {
         players.put(player.getOwnerId(), player);
     }
