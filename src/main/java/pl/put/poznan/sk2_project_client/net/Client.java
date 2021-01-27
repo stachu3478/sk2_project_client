@@ -1,15 +1,10 @@
 package pl.put.poznan.sk2_project_client.net;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Timer;
 
 public class Client {
     private SocketChannel channel;

@@ -119,6 +119,12 @@ public class Me extends Player {
 
     public void leftGame(GameMessage m) {
         inGame = false;
+        inLobby = false;
+    }
+
+    public void playerLeft(GameMessage msg) {
+        PlayerLeftMessage m = (PlayerLeftMessage) msg;
+        game.removePlayer(m.getOwnerId());
     }
 
     public Game getGame() {
@@ -139,5 +145,9 @@ public class Me extends Player {
 
     public void changeGame() {
         this.client.emit(new ChangeGameMessage());
+    }
+
+    public boolean hasFinishedGame() {
+        return isInGame() && game.isFinishedFor(this);
     }
 }

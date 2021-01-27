@@ -47,6 +47,7 @@ public class GameApp {
             messageIdentifier.setUnitDestroyedCallback(me::unitDestroyed);
             messageIdentifier.setUnitSpawnedCallback(me::unitSpawned);
             messageIdentifier.setGameLeftCallback(me::leftGame);
+            messageIdentifier.setPlayerLeftCallback(me::playerLeft);
             me.setMessageIdentifier(messageIdentifier);
         }
     }

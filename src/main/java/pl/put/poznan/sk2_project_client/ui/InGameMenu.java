@@ -27,7 +27,7 @@ public class InGameMenu {
         }
         menu.setPosition(new Point(bounds.width / 2, bounds.height / 2));
         menu.render(g);
-        if (me.getGame().isFinishedFor(me)) {
+        if (me.hasFinishedGame()) {
             if (me.getGame().isWinner(me)) menu.setDefaultText("You win");
             else menu.setDefaultText("You lost");
             setActive(true);
@@ -36,7 +36,7 @@ public class InGameMenu {
     }
 
     public void setActive(boolean active) {
-        if (!active && me.getGame().isFinishedFor(me)) return;
+        if (!active && me.hasFinishedGame()) return;
         this.menu.setShown(active);
         this.active = active;
     }

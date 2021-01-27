@@ -1,22 +1,31 @@
 package pl.put.poznan.sk2_project_client.ui;
 
 import pl.put.poznan.sk2_project_client.game.Game;
+import pl.put.poznan.sk2_project_client.game.Me;
 import pl.put.poznan.sk2_project_client.game.Player;
+import pl.put.poznan.sk2_project_client.ui.rotary_menu.MenuItem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
 
 public class LobbyPanel extends SwappablePanel {
-    private final Game game;
+    private final Me me;
     private JPanel playersInfo;
     private int countdown = -1;
-    private SwingWorker<Void, Object> downCounter;
+    private Timer downCounter;
     private final JLabel waitingText;
     private final JLabel startInfo;
+    private final static int RENDERING_PERIOD_MILLIS = 17; // 60 fps
+    private final Timer renderingTimer = new Timer(RENDERING_PERIOD_MILLIS, (e) -> panel.repaint());
+    private final InGameMenu menu;
 
-    public LobbyPanel(Game game) {
+    public LobbyPanel(Me me) {
         super();
-        this.game = game;
+        this.me = me;
+        this.menu = new InGameMenu(me);
+
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         waitingText = new JLabel("Waiting for players...");
@@ -24,14 +33,39 @@ public class LobbyPanel extends SwappablePanel {
         waitingText.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(waitingText);
 
-        startInfo = new JLabel("Minimum players to start: " + game.getConfig().getMinPlayersToStart());
+        startInfo = new JLabel("Minimum players to start: " + me.getGame().getConfig().getMinPlayersToStart());
         startInfo.setForeground(Color.LIGHT_GRAY);
         startInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(startInfo);
         update();
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
+        panel.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == 27) menu.setActive(!menu.isActive());
+            }
+        });
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                super.mouseClicked(evt);
+                menu.processClick(new Point(evt.getX(), evt.getY()));
+                panel.requestFocusInWindow();
+            }
+        });
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                super.mouseMoved(e);
+                menu.processHover(new Point(e.getX(), e.getY()));
+            }
+        });
     }
 
     public void update() {
+        Game game = me.getGame();
         if (playersInfo != null) panel.remove(playersInfo);
         playersInfo = new JPanel();
         playersInfo.setLayout(new BoxLayout(playersInfo, BoxLayout.Y_AXIS));
@@ -58,10 +92,14 @@ public class LobbyPanel extends SwappablePanel {
 
     private void startCountdown() {
         panel.remove(startInfo);
-        countdown = game.getConfig().getCountdownSeconds();
+        countdown = me.getGame().getConfig().getCountdownSeconds();
         updateCountdown();
-        downCounter = new DownCounter();
-        downCounter.execute();
+        downCounter = new Timer(1000, (e) -> {
+            countdown--;
+            updateCountdown();
+            if (countdown <= 0) downCounter.stop();
+        });
+        downCounter.start();
     }
 
     private void updateCountdown() {
@@ -70,20 +108,18 @@ public class LobbyPanel extends SwappablePanel {
         waitingText.setText("Starting in 0" + (countdown / 60) + ":" + secondsString);
     }
 
-    private class DownCounter extends SwingWorker<Void, Object> {
-        @Override
-        protected Void doInBackground() throws Exception {
-            Thread.sleep(1000);
-            countdown--;
-            return null;
-        }
+    @Override
+    public void draw(Graphics2D g) {
+        menu.render(g);
+    }
 
-        @Override
-        protected void done() {
-            updateCountdown();
-            if (countdown <= 0) return;
-            downCounter = new DownCounter();
-            downCounter.execute();
-        }
+    @Override
+    public void mounted() {
+        renderingTimer.start();
+    }
+
+    @Override
+    public void dismounted() {
+        renderingTimer.stop();
     }
 }

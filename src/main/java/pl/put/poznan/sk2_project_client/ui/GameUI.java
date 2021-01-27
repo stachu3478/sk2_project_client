@@ -71,7 +71,7 @@ public class GameUI {
     }
 
     public void inLobby() {
-        LobbyPanel lobbyPanel = new LobbyPanel(me.getGame());
+        LobbyPanel lobbyPanel = new LobbyPanel(me);
         setPanel(lobbyPanel);
     }
 
