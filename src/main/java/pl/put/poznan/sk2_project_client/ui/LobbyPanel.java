@@ -84,14 +84,20 @@ public class LobbyPanel extends SwappablePanel {
             playersInfo.add(nickText);
         }
         panel.add(playersInfo);
-        panel.revalidate();
-        panel.repaint();
         if (countdown == -1 && playersCount >= game.getConfig().getMinPlayersToStart()) startCountdown();
+        else if (countdown != -1 && playersCount <= game.getConfig().getMinPlayersToStart()) {
+            downCounter.stop();
+            countdown = -1;
+            startInfo.setVisible(true);
+            updateCountdown();
+        }
+        panel.revalidate();
         if (frame != null) frame.repaint();
+        else panel.repaint();
     }
 
     private void startCountdown() {
-        panel.remove(startInfo);
+        startInfo.setVisible(false);
         countdown = me.getGame().getConfig().getCountdownSeconds();
         updateCountdown();
         downCounter = new Timer(1000, (e) -> {
@@ -103,9 +109,13 @@ public class LobbyPanel extends SwappablePanel {
     }
 
     private void updateCountdown() {
-        StringBuilder secondsString = new StringBuilder(Integer.toString(countdown % 60));
-        while (secondsString.length() < 2) secondsString.insert(0, "0");
-        waitingText.setText("Starting in 0" + (countdown / 60) + ":" + secondsString);
+        if (countdown == -1) {
+            waitingText.setText("Waiting for players...");
+        } else {
+            StringBuilder secondsString = new StringBuilder(Integer.toString(countdown % 60));
+            while (secondsString.length() < 2) secondsString.insert(0, "0");
+            waitingText.setText("Starting in 0" + (countdown / 60) + ":" + secondsString);
+        }
     }
 
     @Override
