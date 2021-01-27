@@ -127,6 +127,11 @@ public class Me extends Player {
         game.removePlayer(m.getOwnerId());
     }
 
+    public void playerScoreChanged(GameMessage msg){
+        PlayersScoreChangedMessage m = (PlayersScoreChangedMessage) msg;
+        game.findPlayer(m.getOwnerId()).setScore(m.getScore());
+    }
+
     public Game getGame() {
         return game;
     }

@@ -8,6 +8,16 @@ public class Player {
     protected byte ownerId;
     protected HashMap<Integer, Unit> units = new HashMap<>();
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    protected int score;
+
     public Player(String nickname, byte ownerId) {
         this.nickname = nickname;
         this.ownerId = ownerId;
@@ -16,7 +26,6 @@ public class Player {
     public byte getOwnerId() {
         return ownerId;
     }
-
     public String getNickname() {
         if (nickname.length() > 0) return nickname;
         return "An unnamed manager";

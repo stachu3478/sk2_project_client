@@ -1,8 +1,6 @@
 package pl.put.poznan.sk2_project_client.ui;
 
-import pl.put.poznan.sk2_project_client.game.Map;
-import pl.put.poznan.sk2_project_client.game.Me;
-import pl.put.poznan.sk2_project_client.game.Unit;
+import pl.put.poznan.sk2_project_client.game.*;
 import pl.put.poznan.sk2_project_client.logic.Marker;
 
 import javax.swing.*;
@@ -11,6 +9,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 public class GameCanvas extends JPanel {
     private final MapRenderer renderer;
@@ -110,6 +109,7 @@ public class GameCanvas extends JPanel {
         super.paint(g);
         if (hasFocus()) scroller.process(getRelativeMousePosition());
         Graphics2D graphics = (Graphics2D) g;
+
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
         if (!scrolledToMyDroids && getSize().width > 0) {
             Unit myUnit = me.getUnits().iterator().next();
@@ -141,11 +141,21 @@ public class GameCanvas extends JPanel {
             graphics.fillRect(m.x - 2, m.y - 16, 4, 8);
             graphics.fillRect(m.x - 2, m.y + 8, 4, 8);
         }
+        drawScore(graphics, me.getGame());
         menu.render(graphics);
     }
 
     private Point getRelativeMousePosition() {
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         return new Point(mousePosition.x - mousePositionOffset.x, mousePosition.y - mousePositionOffset.y);
+    }
+    private void drawScore(Graphics2D g, Game game){
+        int x=700;
+        int y=20;
+        for(Player player: game.getPlayers()){
+            String nick = player.getNickname();
+            int score = player.getScore();
+            g.drawString(nick +" "+ score,x,y+=20);
+        }
     }
 }

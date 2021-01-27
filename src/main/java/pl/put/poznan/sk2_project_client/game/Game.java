@@ -36,6 +36,8 @@ public class Game {
 
     public void removePlayer(byte ownerId) { players.remove(ownerId); }
 
+    public Player findPlayer(byte ownerId){ return players.get(ownerId); }
+
     public void addUnit(Unit unit) {
         players.get(unit.getOwnerId()).addUnit(unit);
         units.put(unit.getId(), unit);
