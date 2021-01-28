@@ -20,7 +20,7 @@ public class GameUI {
         this.me = me;
         this.connectedPanel = new ConnectedPanel(me);
 
-        frame = new JFrame("SK2 Game 0.1.2-BETA");
+        frame = new JFrame("SK2 Game 0.1.3-BETA");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // FIXME: Normal X closing does not work
         frame.setLayout(new GridLayout());
         frame.setSize(800, 600);
