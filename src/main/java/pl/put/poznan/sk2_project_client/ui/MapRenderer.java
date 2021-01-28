@@ -52,7 +52,7 @@ public class MapRenderer {
             if (unit == null) {
                 graphics2D.setColor(new Color(230 + 20 * (tileX % 2), 170 + 20 * (tileY % 2), 170));
             } else {
-                graphics2D.setColor(unit.getColor());
+                graphics2D.setColor(ColorManager.getColorByOwnerId(unit.getOwnerId()));
             }
             graphics2D.fillRect(screenX, screenY, T_SIZE, T_SIZE);
             if (unit != null) {

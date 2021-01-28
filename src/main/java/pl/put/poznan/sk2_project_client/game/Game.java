@@ -58,6 +58,10 @@ public class Game {
         return players.values();
     }
 
+    public HashMap<Byte, Player> getPlayersMap() {
+        return players;
+    }
+
     public Config getConfig() {
         return config;
     }
