@@ -48,6 +48,7 @@ public class GameApp {
             messageIdentifier.setUnitSpawnedCallback(me::unitSpawned);
             messageIdentifier.setGameLeftCallback(me::leftGame);
             messageIdentifier.setPlayerLeftCallback(me::playerLeft);
+            messageIdentifier.setPlayerScoreChangedCallback(me::playerScoreChanged);
             me.setMessageIdentifier(messageIdentifier);
         }
     }

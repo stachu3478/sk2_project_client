@@ -2,7 +2,7 @@ package pl.put.poznan.sk2_project_client.game.message;
 
 import pl.put.poznan.sk2_project_client.game.Unit;
 import pl.put.poznan.sk2_project_client.net.MessageOut;
-import sun.plugin2.message.Message;
+
 
 import java.nio.ByteBuffer;
 

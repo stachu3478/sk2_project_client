@@ -1,15 +1,22 @@
 package pl.put.poznan.sk2_project_client.ui;
 
 import pl.put.poznan.sk2_project_client.game.*;
+import pl.put.poznan.sk2_project_client.game.Map;
 import pl.put.poznan.sk2_project_client.logic.Marker;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 public class GameCanvas extends JPanel {
     private final MapRenderer renderer;
@@ -149,13 +156,59 @@ public class GameCanvas extends JPanel {
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         return new Point(mousePosition.x - mousePositionOffset.x, mousePosition.y - mousePositionOffset.y);
     }
-    private void drawScore(Graphics2D g, Game game){
-        int x=700;
-        int y=20;
+
+    public List<Entry<String, Integer>> getSortedMap(Game game){
+        java.util.Map<String,Integer> unSorted = new HashMap<String, Integer>();
         for(Player player: game.getPlayers()){
             String nick = player.getNickname();
             int score = player.getScore();
-            g.drawString(nick +" "+ score,x,y+=20);
+            unSorted.put(nick, score);
+        }
+        List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unSorted.entrySet());
+        Collections.sort(list, new Comparator<Entry<String, Integer>>() {
+            @Override
+            public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        //unSorted.entrySet().stream().sorted(java.util.Map.Entry.comparingByValue()).forEachOrdered(x->SortedMap.put(x.getKey(),x.getValue()));
+        return list;
+    }
+    private void drawScore(Graphics2D g, Game game){
+        int x=0;
+        int y=20;
+        int max = 0;
+        int Width2 = g.getFontMetrics().stringWidth("Scoreboard: ");
+        int width3 = g.getFontMetrics().stringWidth("1000");
+        for(Player player: game.getPlayers()){
+            String nick = player.getNickname();
+            int score = player.getScore();
+            int szerokosc = g.getFontMetrics().stringWidth(nick +" "+ score);
+            if(max < szerokosc){
+                max = szerokosc;
+            }
+        }
+        if(max < Width2){
+            max = Width2;
+        }
+        g.setColor(Color.BLACK);
+        g.drawRect(x,0,x+max+width3,100);
+        g.fillRect(x,0,x+max+width3,100);
+        List<Entry<String, Integer>> Sorted = getSortedMap(game);
+        for(Entry<String, Integer> entry: Sorted){
+            String nick = entry.getKey();
+            int score = entry.getValue();
+            //g.setColor(Color.BLACK);
+            g.setStroke(new BasicStroke(2));
+            g.setFont(new Font("Consolas", Font.PLAIN, 10));
+            int Width = g.getFontMetrics().stringWidth(nick +" "+ score);
+            //g.drawRect(x-Width-10,0,Width+10,100);
+            //g.fillRect(x-Width-10,10,Width+10,90);
+            g.setColor(Color.WHITE);
+            g.drawString("Scoreboard: ",x,10);
+            g.drawString(nick,x,y+=20);
+            String s = String.valueOf(score);
+            g.drawString(s,x+max,y);
         }
     }
 }
