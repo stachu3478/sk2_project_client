@@ -19,6 +19,7 @@ public class ScoreBoardRenderer {
         int x=5;
         int y=20;
         int max = 0;
+        int playersCount = 0;
         int Width2 = g.getFontMetrics().stringWidth(NAME);
         int width3 = g.getFontMetrics().stringWidth("    ");
         for(Player player: game.getPlayers()){
@@ -28,13 +29,14 @@ public class ScoreBoardRenderer {
             if(max < szerokosc){
                 max = szerokosc;
             }
+            playersCount ++;
         }
         if(max < Width2){
             max = Width2;
         }
         g.setColor(Color.BLACK);
-        g.drawRect(0,0,x+max+width3,100);
-        g.fillRect(0,0,x+max+width3,100);
+        g.drawRect(0,0,x+max+width3,30+(playersCount * 20));
+        g.fillRect(0,0,x+max+width3,30+(playersCount * 20));
         List<Map.Entry<Byte, Player>> Sorted = getSortedMap(game);
         for(Map.Entry<Byte, Player> entry: Sorted){
             Player player = entry.getValue();

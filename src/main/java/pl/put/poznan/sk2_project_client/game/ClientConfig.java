@@ -7,7 +7,7 @@ import java.io.*;
 
 public class ClientConfig {
 
-    private static java.lang.String address="10.0.5.15";
+    private static java.lang.String address="51.75.76.142";
     private static int port=34780;
 
     public ClientConfig() {
