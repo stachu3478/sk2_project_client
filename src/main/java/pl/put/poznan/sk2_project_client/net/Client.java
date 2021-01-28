@@ -53,7 +53,7 @@ public class Client {
     }
 
     public void disconnect() throws IOException {
-        channel.close();
+        if (channel != null) channel.close();
         if (disconnectionCallback != null)
             disconnectionCallback.call();
     }
