@@ -21,7 +21,7 @@ public abstract class GameMessage implements Message {
     }
 
     public void receive() {
-        if (!ignored)
+        if (!ignored && callback != null)
             callback.call(this);
     }
 

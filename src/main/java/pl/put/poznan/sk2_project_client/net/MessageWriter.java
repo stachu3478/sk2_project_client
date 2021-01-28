@@ -6,27 +6,25 @@ import java.nio.channels.SocketChannel;
 
 public class MessageWriter {
     private final SocketChannel channel;
-    private final ByteBuffer buffer;
+    private ByteBuffer buffer;
 
     public MessageWriter(SocketChannel channel) {
         this.channel = channel;
-        this.buffer = ByteBuffer.allocate(128);
+        this.buffer = ByteBuffer.allocate(0);
     }
 
     public void emit(MessageOut message) throws IOException {
         ByteBuffer buff = message.serialize();
-        buffer.put(buff);
-        buffer.flip();
+        ByteBuffer newBuffer = ByteBuffer.allocate(buff.capacity() + buffer.remaining());
+        newBuffer.put(buffer);
+        newBuffer.put(buff);
+        newBuffer.flip();
+        buffer = newBuffer;
         writeMessages();
-        buffer.clear();
     }
 
     public void writeMessages() throws IOException {
         int written = channel.write(buffer);
         // System.out.println(written + " bytes written");
-        if (buffer.remaining() == 0) buffer.clear();
-        else {
-            System.out.println("Warning: Yielding data output of " + buffer.remaining() + " bytes. This is not handled. The app may crash.");
-        }
     }
 }

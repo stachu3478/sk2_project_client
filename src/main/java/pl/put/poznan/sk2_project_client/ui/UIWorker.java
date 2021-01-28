@@ -25,11 +25,12 @@ public class UIWorker extends SwingWorker<Void, Object> {
     }
 
     @Override
-    protected Void doInBackground() {
+    protected Void doInBackground() throws IOException {
         synchronized (me) {
             try {
                 me.getClient().select();
             } catch (Throwable e) {
+                me.disconnect();
                 e.printStackTrace();
             }
         }

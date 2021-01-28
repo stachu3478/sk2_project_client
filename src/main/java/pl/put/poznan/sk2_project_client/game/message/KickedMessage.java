@@ -19,6 +19,7 @@ public class KickedMessage extends GameMessage {
         if (!lengthRead) {
             if (buffer.remaining() == 0) return;
             reasonLength = buffer.get();
+            lengthRead = true;
         }
         if (buffer.remaining() < reasonLength) return;
         byte[] bytes = new byte[reasonLength];
