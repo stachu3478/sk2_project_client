@@ -1,22 +1,28 @@
 package pl.put.poznan.sk2_project_client;
 
+//import com.sun.org.apache.xpath.internal.operations.String;
 import pl.put.poznan.sk2_project_client.game.GameMessageIdentifier;
 import pl.put.poznan.sk2_project_client.game.Me;
 import pl.put.poznan.sk2_project_client.ui.GameUI;
 import pl.put.poznan.sk2_project_client.ui.ImageLoader;
 import pl.put.poznan.sk2_project_client.ui.rotary_menu.MenuItem;
+import pl.put.poznan.sk2_project_client.game.ClientConfig;
+import java.io.*;
 
 import java.awt.*;
 
 public class GameApp {
+    private static ClientConfig cfg= new ClientConfig();
     private final Me me;
     private GameMessageIdentifier messageIdentifier;
     private GameUI ui;
 
-    private static String address = "192.168.110.135";
-    private static int port = 34780;
+    private static java.lang.String address;
+    private static int port;
 
     public static void main(String[] args) {
+        address = cfg.getAddress();
+        port = cfg.getPort();
         if (args.length > 0) address = args[0];
         if (args.length > 1) port = Integer.parseInt(args[1]);
 
