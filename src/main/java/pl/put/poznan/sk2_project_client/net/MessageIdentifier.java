@@ -18,6 +18,7 @@ public abstract class MessageIdentifier {
     }
 
     public boolean readMessages() {
+        if (!channel.isOpen()) return false;
         int read = 0;
         int bufferMultiplier = 1;
         do {

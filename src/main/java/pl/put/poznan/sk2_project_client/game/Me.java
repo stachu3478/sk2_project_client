@@ -12,6 +12,7 @@ public class Me extends Player {
     private Client client;
     private boolean inLobby = false;
     private boolean inGame = false;
+    private boolean disconnecting = false;
     private Game game;
     private String address;
     private int port;
@@ -29,6 +30,7 @@ public class Me extends Player {
     }
 
     public void disconnect() throws IOException {
+        disconnecting = true;
         client.disconnect();
     }
 
@@ -154,5 +156,9 @@ public class Me extends Player {
 
     public boolean hasFinishedGame() {
         return isInGame() && game.isFinishedFor(this);
+    }
+
+    public boolean isDisconnecting() {
+        return disconnecting;
     }
 }
