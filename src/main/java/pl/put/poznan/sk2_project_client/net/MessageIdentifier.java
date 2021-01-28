@@ -35,9 +35,9 @@ public abstract class MessageIdentifier {
             if (read == -1) {
                 buffer.clear();
                 return false; // EOF
-            } else {
+            } /* else {
                 System.out.println(read + " bytes read");
-            }
+            } */
 
             buffer = ByteBuffer.allocate(buff.remaining());
             buffer.put(buff);
