@@ -6,7 +6,7 @@
 
     <groupId>pl.put.poznan.sk2_project_client</groupId>
     <artifactId>GameApp</artifactId>
-    <version>0.1.3-BETA</version>
+    <version>0.1.4-BETA</version>
 
     <build>
         <plugins>

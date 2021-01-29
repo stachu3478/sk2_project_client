@@ -117,8 +117,8 @@ public class GameCanvas extends JPanel {
             scrolledToMyDroids = true;
         }
         if (!hasFocus()) {
-            scoreBoardRenderer.render(graphics);
             renderer.render(graphics);
+            scoreBoardRenderer.render(graphics);
             menu.render(graphics);
             return;
         }
