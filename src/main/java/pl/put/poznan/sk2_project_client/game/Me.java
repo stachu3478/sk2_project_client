@@ -81,6 +81,7 @@ public class Me extends Player {
         this.ownerId = m.getOwnerId();
         this.game = new Game(m.getConfig());
         this.game.addPlayer(this);
+        clearUnits();
     }
 
     public void playerJoined(GameMessage msg) {
@@ -92,6 +93,7 @@ public class Me extends Player {
         GameJoinMessage m = (GameJoinMessage) msg;
         inGame = true;
         inLobby = false;
+        clearUnits();
         for (Unit unit : m.getUnits()) {
             game.addUnit(unit);
         }
@@ -122,6 +124,7 @@ public class Me extends Player {
     public void leftGame(GameMessage m) {
         inGame = false;
         inLobby = false;
+        clearUnits();
     }
 
     public void playerLeft(GameMessage msg) {
@@ -160,5 +163,11 @@ public class Me extends Player {
 
     public boolean isDisconnecting() {
         return disconnecting;
+    }
+
+    @Override
+    public void clearUnits() {
+        super.clearUnits();
+        unitSelector.clear();
     }
 }

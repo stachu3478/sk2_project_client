@@ -61,7 +61,6 @@ public class InGameMenu {
         if (item.getName().equals("Change game")) me.changeGame();
         if (item.getName().equals("Leave game")) me.leaveGame();
         setActive(false);
-        // TODO: leave / change game
     }
 
     public void processHover(Point p) {

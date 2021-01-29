@@ -111,7 +111,7 @@ public class GameCanvas extends JPanel {
         Graphics2D graphics = (Graphics2D) g;
 
         camera.setSize(getSize().width, getSize().height); // FIXME: resized event does not work
-        if (!scrolledToMyDroids && getSize().width > 0) {
+        if (!scrolledToMyDroids && getSize().width > 0 && !me.getUnits().isEmpty()) {
             Unit myUnit = me.getUnits().iterator().next();
             camera.setCenter(myUnit.getXPos(), myUnit.getYPos());
             scrolledToMyDroids = true;

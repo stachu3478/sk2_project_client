@@ -46,4 +46,6 @@ public class Player {
     public Collection<Unit> getUnits() {
         return units.values();
     }
+
+    public void clearUnits() { units.clear(); }
 }
