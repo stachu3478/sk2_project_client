@@ -9,12 +9,15 @@ import java.awt.*;
 public class InGameMenu {
     private Me me;
     private boolean active = false;
+    private boolean gameFinished = false;
     private final RotaryMenu menu;
+    private final MenuItem backToGameItem;
 
     public InGameMenu(Me me) {
         this.me = me;
         this.menu = new RotaryMenu();
-        menu.addItem(new MenuItem("Back to game", "cancel"));
+        backToGameItem = new MenuItem("Back to game", "cancel");
+        menu.addItem(backToGameItem);
         menu.addItem(new MenuItem("Change game", "change"));
         menu.addItem(new MenuItem("Leave game", "exit"));
     }
@@ -27,16 +30,22 @@ public class InGameMenu {
         }
         menu.setPosition(new Point(bounds.width / 2, bounds.height / 2));
         menu.render(g);
-        if (me.hasFinishedGame()) {
+        boolean hasFinishedGame = me.hasFinishedGame();
+        if (hasFinishedGame && !gameFinished) {
+            gameFinished = true;
             if (me.getGame().isWinner(me)) menu.setDefaultText("You win");
             else menu.setDefaultText("You lost");
             setActive(true);
             menu.removeItem("Back to game");
+        } else if (!hasFinishedGame && gameFinished) {
+            gameFinished = false;
+            menu.setDefaultText("");
+            menu.addItem(backToGameItem, 0);
         }
     }
 
     public void setActive(boolean active) {
-        if (!active && me.hasFinishedGame()) return;
+        if (!active && gameFinished) return;
         this.menu.setShown(active);
         this.active = active;
     }

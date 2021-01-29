@@ -64,6 +64,10 @@ public class RotaryMenu {
         items.add(item);
     }
 
+    public void addItem(MenuItem item, int at) {
+        items.add(at, item);
+    }
+
     public void removeItem(String name) {
         MenuItem item = null;
         for (MenuItem i : items) {
