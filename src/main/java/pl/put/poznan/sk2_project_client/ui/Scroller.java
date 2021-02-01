@@ -26,16 +26,25 @@ public class Scroller {
     }
 
     public void process(Point mousePosition) {
-        if (mousePosition.x < 50 && mousePosition.x > 0) mScrollingX = -1;
-        else if (mousePosition.x > camera.getScreenWidth() - 50 && mousePosition.x < camera.getScreenWidth()) mScrollingX = 1;
-        else mScrollingX = 0;
-        if (mousePosition.y < 50 && mousePosition.y > 0) mScrollingY = -1;
-        else if (mousePosition.y > camera.getScreenHeight() - 50 && mousePosition.y < camera.getScreenHeight()) mScrollingY = 1;
-        else mScrollingY = 0;
+        processMouse(mousePosition);
         Instant now = Instant.now();
         int millisBetweenLastScroll = (int) Duration.between(lastScrollTime, now).toMillis();
         int pixelsToScroll = millisBetweenLastScroll * SCROLLING_PIXELS_PER_SECOND / 1000;
         camera.scrollBy(pixelsToScroll * (scrollingX + mScrollingX), pixelsToScroll * (scrollingY + mScrollingY));
         lastScrollTime = now;
+    }
+
+    private void processMouse(Point mousePosition) {
+        int mouseX = mousePosition.x;
+        int mouseY = mousePosition.y;
+        int maxX = camera.getScreenWidth();
+        int maxY = camera.getScreenHeight();
+        mScrollingX = 0;
+        mScrollingY = 0;
+        if (mouseX < 0 || mouseY < 0 || mouseX > maxX || mouseY > maxY) return;
+        if (mouseX < 50) mScrollingX = -1;
+        else if (mouseX > maxX - 50) mScrollingX = 1;
+        if (mouseY < 50) mScrollingY = -1;
+        else if (mouseY > maxY - 50) mScrollingY = 1;
     }
 }
