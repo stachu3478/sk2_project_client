@@ -8,8 +8,8 @@ public class PlayMessage extends MessageOut {
     private final String nickname;
 
     public PlayMessage(String nickname) {
-        this.nickname = nickname;
-    }
+        this.nickname = nickname.substring(0, 255);
+    } // prevent too long nickname to be sent as only one byte determines the length
 
     public ByteBuffer serialize() {
         ByteBuffer buffer = ByteBuffer.allocate(2 + nickname.length());

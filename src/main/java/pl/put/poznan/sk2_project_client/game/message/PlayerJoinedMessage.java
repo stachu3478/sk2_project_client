@@ -7,7 +7,7 @@ public class PlayerJoinedMessage extends GameMessage {
     private boolean complete = false;
     private boolean lengthRead = false;
     private String nickname;
-    private byte length;
+    private int length;
     private byte ownerId;
 
     public PlayerJoinedMessage(ReceivedCallback callback) {
@@ -18,7 +18,7 @@ public class PlayerJoinedMessage extends GameMessage {
         if (!lengthRead) {
             if (buffer.remaining() < 2) return;
             ownerId = buffer.get();
-            length = buffer.get();
+            length = buffer.get() & 0xFF; // make unsigned to prevent negative length
             lengthRead = true;
         }
         if (buffer.remaining() < length) return;

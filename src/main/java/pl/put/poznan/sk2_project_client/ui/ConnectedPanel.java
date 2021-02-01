@@ -26,6 +26,7 @@ public class ConnectedPanel extends SwappablePanel {
         nicknameLabel.setForeground(Color.LIGHT_GRAY);
         nicknameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         JTextField nicknameField = new JTextField();
+        nicknameField.setCaretColor(Color.WHITE);
         Color transparent = new Color(0, 0, 0, 0);
         JPanel nicknameFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 100));
         nicknameFieldContainer.setBackground(transparent);
