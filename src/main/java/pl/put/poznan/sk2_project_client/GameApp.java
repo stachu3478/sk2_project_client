@@ -10,6 +10,7 @@ import pl.put.poznan.sk2_project_client.game.ClientConfig;
 import java.io.*;
 
 import java.awt.*;
+import java.util.Properties;
 
 public class GameApp {
     private static ClientConfig cfg= new ClientConfig();
@@ -29,10 +30,20 @@ public class GameApp {
         new GameApp();
     }
 
+    public static String getVersion() {
+        final Properties properties = new Properties();
+        try {
+            properties.load(GameApp.class.getClassLoader().getResourceAsStream("project.properties"));
+            return properties.getProperty("version");
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
     public GameApp() {
         me = new Me(address, port);
         EventQueue.invokeLater(() -> {
-            ui = new GameUI(me);
+            ui = new GameUI(me, getVersion());
         });
 
         ImageLoader loader = new ImageLoader()
