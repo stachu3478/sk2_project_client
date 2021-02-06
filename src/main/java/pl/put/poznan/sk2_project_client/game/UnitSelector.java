@@ -2,11 +2,11 @@ package pl.put.poznan.sk2_project_client.game;
 
 import pl.put.poznan.sk2_project_client.logic.Marker;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Vector;
 
 public class UnitSelector {
-    private final ArrayList<Unit> selectedUnits = new ArrayList<>();
+    private final Vector<Unit> selectedUnits = new Vector<>();
 
     public void clear() {
         for (Unit unit : selectedUnits) unit.setSelected(false);
@@ -36,7 +36,7 @@ public class UnitSelector {
         selectedUnits.remove(unit);
     }
 
-    public ArrayList<Unit> getSelectedUnits() {
+    public Vector<Unit> getSelectedUnits() {
         return selectedUnits;
     }
 }

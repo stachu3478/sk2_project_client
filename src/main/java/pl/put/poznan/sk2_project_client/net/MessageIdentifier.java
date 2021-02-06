@@ -11,6 +11,7 @@ public abstract class MessageIdentifier {
 
     public MessageIdentifier() {
         buffer = ByteBuffer.allocate(8);
+        buffer.flip();
     }
 
     public void setChannel(SocketChannel channel) {
@@ -22,17 +23,18 @@ public abstract class MessageIdentifier {
         int read = 0;
         int bufferMultiplier = 1;
         do {
-            buffer.flip();
             ByteBuffer buff = ByteBuffer.allocate((buffer.remaining() + 16 + read) * bufferMultiplier);
             buff.put(buffer);
+            buffer = buff;
             try {
-                read = channel.read(buff);
+                read = channel.read(buffer);
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
             }
-            buff.flip();
-            createMessages(buff);
+            buffer.flip();
+
+            createMessages(buffer);
             if (read == -1) {
                 buffer.clear();
                 return false; // EOF
@@ -40,11 +42,8 @@ public abstract class MessageIdentifier {
                 System.out.println(read + " bytes read");
             } */
 
-            buffer = ByteBuffer.allocate(buff.remaining());
-            buffer.put(buff);
             bufferMultiplier *= 2;
         } while (read > 0);
-
 
         return true;
     }

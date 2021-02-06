@@ -55,7 +55,7 @@ public class GameApp {
         MenuItem.useLoader(loader);
 
         synchronized (me) {
-            messageIdentifier = new GameMessageIdentifier(me);
+            messageIdentifier = new GameMessageIdentifier();
             messageIdentifier.setJoinCallback(me::joinedLobby);
             messageIdentifier.setPlayerJoinCallback(me::playerJoined);
             messageIdentifier.setGameJoinCallback(me::joinedGame);

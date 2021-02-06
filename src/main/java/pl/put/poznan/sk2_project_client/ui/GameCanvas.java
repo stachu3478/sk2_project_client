@@ -34,7 +34,7 @@ public class GameCanvas extends JPanel {
         renderer.setCamera(camera);
         renderer.setMyOwnerId(me.getOwnerId());
         scoreBoardRenderer = new ScoreBoardRenderer(me.getGame());
-        renderingTimer.start(); // TODO: stop timer when left the game (ComponentListener not working)
+        renderingTimer.start();
         setFocusable(true);
         requestFocusInWindow();
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -144,6 +144,10 @@ public class GameCanvas extends JPanel {
         }
         scoreBoardRenderer.render(graphics);
         menu.render(graphics);
+    }
+
+    public void stop() {
+        renderingTimer.stop();
     }
 
     private Point getRelativeMousePosition() {

@@ -19,4 +19,10 @@ public class InGamePanel extends SwappablePanel {
         panel.setLayout(new BorderLayout());
         panel.add(gameCanvas);
     }
+
+    @Override
+    public void dismounted() {
+        super.dismounted();
+        gameCanvas.stop();
+    }
 }

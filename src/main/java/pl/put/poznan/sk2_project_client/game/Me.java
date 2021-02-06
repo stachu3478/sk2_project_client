@@ -7,6 +7,7 @@ import pl.put.poznan.sk2_project_client.net.ClientDisconnectionCallback;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Me extends Player {
     private Client client;
@@ -61,11 +62,11 @@ public class Me extends Player {
         this.client.emit(new PlayMessage(nickname));
     }
 
-    public void moveUnits(ArrayList<Unit> units, Point target) {
+    public void moveUnits(Vector<Unit> units, Point target) {
         this.client.emit(new UnitMoveMessage(units.toArray(new Unit[0]), target.x, target.y));
     }
 
-    public void attackUnits(ArrayList<Unit> units, Unit target) {
+    public void attackUnits(Vector<Unit> units, Unit target) {
         this.client.emit(new AttackMessage(units.toArray(new Unit[0]), target));
     }
 
@@ -106,7 +107,7 @@ public class Me extends Player {
 
     public void unitAttacked(GameMessage msg) {
         UnitAttackedMessage m = (UnitAttackedMessage) msg;
-        Unit attacker = game.findUnit(m.getAttackerUnitId());
+        Unit attacker = game.findUnit(m.getAttackerUnitId()); // FIXME: attacker should != null
         if (attacker != null) attacker.attack(game.findUnit(m.getAttackedUnitId()), m.getAttackedUnitHitPoints());
     }
 

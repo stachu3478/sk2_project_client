@@ -1,12 +1,12 @@
 package pl.put.poznan.sk2_project_client.game;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 
 public class Player {
     protected String nickname;
     protected byte ownerId;
-    protected HashMap<Integer, Unit> units = new HashMap<>();
+    protected Hashtable<Integer, Unit> units = new Hashtable<>();
 
     public int getScore() {
         return score;

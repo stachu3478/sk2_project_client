@@ -1,13 +1,13 @@
 package pl.put.poznan.sk2_project_client.game;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 
 public class Game {
     private final Config config;
     private final Map map;
-    private final HashMap<Byte, Player> players = new HashMap<>();
-    private final HashMap<Integer, Unit> units = new HashMap<>();
+    private final Hashtable<Byte, Player> players = new Hashtable<>();
+    private final Hashtable<Integer, Unit> units = new Hashtable<>();
 
     public Game(Config config) {
         this.config = config;
@@ -58,7 +58,7 @@ public class Game {
         return players.values();
     }
 
-    public HashMap<Byte, Player> getPlayersMap() {
+    public Hashtable<Byte, Player> getPlayersMap() {
         return players;
     }
 

@@ -14,20 +14,20 @@ public class GameJoinMessage extends GameMessage {
     }
 
     public void readBuffer(ByteBuffer buffer) {
-        if (lengthRead) {
-            if (buffer.remaining() < 14 * units.length) return;
-            for (int i = 0; i < units.length; i++) {
-                units[i] = new Unit((byte)0);
-                units[i].setId(buffer.getInt());
-                units[i].setPercentHp(buffer.get());
-                units[i].setOwnerId(buffer.get());
-                units[i].setPos(buffer.getInt(), buffer.getInt());
-            }
-            complete = true;
+        if (!lengthRead) {
+            if (buffer.remaining() < 4) return;
+            units = new Unit[buffer.getInt()];
+            lengthRead = true;
         }
-        if (buffer.remaining() < 4) return;
-        units = new Unit[buffer.getInt()];
-        lengthRead = true;
+        if (buffer.remaining() < 14 * units.length) return;
+        for (int i = 0; i < units.length; i++) {
+            units[i] = new Unit((byte)0);
+            units[i].setId(buffer.getInt());
+            units[i].setPercentHp(buffer.get());
+            units[i].setOwnerId(buffer.get());
+            units[i].setPos(buffer.getInt(), buffer.getInt());
+        }
+        complete = true;
     }
 
     public boolean isComplete() {

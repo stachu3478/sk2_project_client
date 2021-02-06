@@ -7,8 +7,6 @@ import pl.put.poznan.sk2_project_client.net.MessageIdentifier;
 import java.nio.ByteBuffer;
 
 public class GameMessageIdentifier extends MessageIdentifier {
-    private MessageFilter filter;
-    private final Me me;
     private GameMessage.ReceivedCallback joinCallback;
     private GameMessage.ReceivedCallback playerJoinCallback;
     private GameMessage.ReceivedCallback gameJoinCallback;
@@ -21,13 +19,8 @@ public class GameMessageIdentifier extends MessageIdentifier {
     private GameMessage.ReceivedCallback kickedCallback;
     private GameMessage.ReceivedCallback playerLeftCallback;
 
-    public GameMessageIdentifier(Me me) {
+    public GameMessageIdentifier() {
         super();
-        this.me = me;
-    }
-
-    public void setFilter(MessageFilter filter) {
-        this.filter = filter;
     }
 
     public Message createMessage(ByteBuffer buffer) {
@@ -49,7 +42,6 @@ public class GameMessageIdentifier extends MessageIdentifier {
         // ... more message type verifies
         else throw new InvalidMessageError("Unknown message type: " + messageType);
 
-        message.setPlayer(me);
         return message;
     }
 
